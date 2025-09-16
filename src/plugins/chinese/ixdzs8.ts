@@ -228,9 +228,52 @@ class ixdzs8Plugin implements Plugin.PluginBase {
       summary_translate = undefined;
     }
 
+    let genre = $novel.find('.n-text p a.nsort').text().trim();
+    switch (genre) {
+      case '玄幻奇幻':
+        genre = 'Fantasy';
+        break;
+      case '武侠小说':
+        genre = 'Martial Arts';
+        break;
+      case '修真仙侠':
+        genre = 'Cultivation';
+        break;
+      case '都市青春':
+        genre = 'Urban';
+        break;
+      case '军事历史':
+        genre = 'History';
+        break;
+      case '网游竞技':
+        genre = 'Games';
+        break;
+      case '科幻灵异':
+        genre = 'Science Fiction';
+        break;
+      case '言情穿越':
+        genre = 'Romance';
+        break;
+      case '耽美同人':
+        genre = 'BL';
+        break;
+      case '台言古言':
+        genre = 'Taiwanese Ancient';
+        break;
+      case '其他小说':
+        genre = 'Other';
+        break;
+    }
     const $tagsDiv = $('div.panel div.tags');
     // find all <a> inside <em> and get their text
     // Select <p> that contains <a.nsort>
+    let novelTags = $tagsDiv
+      .find('em a')
+      .map((_i, el) => $(el).text().trim())
+      .get()
+      .filter(tag => tag.length > 0) // remove empty strings
+      .join(', ');
+    novelTags = genre + ', ' + novelTags;
 
     const statOngoing = $novel.find('.n-text p span.lz').text().trim();
     const statEnd = $novel.find('.n-text p span.end').text().trim();
@@ -251,12 +294,7 @@ class ixdzs8Plugin implements Plugin.PluginBase {
         defaultCover,
       summary: summary_translate,
       author: $novel.find('.n-text p a.bauthor').text().trim() || undefined,
-      genres: $tagsDiv
-        .find('em a')
-        .map((_i, el) => $(el).text().trim())
-        .get()
-        .filter(tag => tag.length > 0) // remove empty strings
-        .join(', '),
+      genres: novelTags,
       status:
         detail === 'Ongoing'
           ? NovelStatus.Ongoing
