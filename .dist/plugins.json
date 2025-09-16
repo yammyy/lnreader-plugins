@@ -13,7 +13,7 @@
 		"name": "爱下电子书",
 		"site": "https://ixdzs8.com/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "2.2.8",
+		"version": "5.0.1",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/ixdzs8.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/ixdzs8/favicon.png"
 	},
