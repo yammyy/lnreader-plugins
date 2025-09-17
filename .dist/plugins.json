@@ -18,6 +18,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/ixdzs8/favicon.png"
 	},
 	{
+		"id": "novel543",
+		"name": "Novel543",
+		"site": "https://www.novel543.com/",
+		"lang": "中文, 汉语, 漢語",
+		"version": "4.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/novel543.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/novel543/icon.png"
+	},
+	{
 		"id": "novelupdates",
 		"name": "Novel Updates",
 		"site": "https://www.novelupdates.com/",
