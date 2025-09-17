@@ -156,7 +156,7 @@ class shuku52Plugin implements Plugin.PluginBase {
   id = '52shuku';
   name = '52书库';
   site = 'https://www.52shuku.net/';
-  version = '1.4.4';
+  version = '2.4.4';
   icon = 'src/cn/52shuku/faviconV2.png';
 
   imageRequestInit = {
