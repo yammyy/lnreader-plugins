@@ -156,7 +156,7 @@ class shuku52Plugin implements Plugin.PluginBase {
   id = '52shuku';
   name = '52书库';
   site = 'https://www.52shuku.net/';
-  version = '2.4.4';
+  version = '2.4.5';
   icon = 'src/cn/52shuku/faviconV2.png';
 
   imageRequestInit = {
@@ -287,7 +287,7 @@ class shuku52Plugin implements Plugin.PluginBase {
     const $ = parseHTML(await result.text());
 
     // === Target the main content container ===
-    const $content = $('div.content.contentmargin article.article-content');
+    const $content = $('article.article-content div');
     if (!$content.length) return 'Error: Could not find chapter content';
 
     // === Remove junk elements ===
