@@ -156,7 +156,7 @@ class drxswPlugin implements Plugin.PluginBase {
   id = 'drxsw';
   name = '冬日小说网';
   site = 'https://www.drxsw.com/';
-  version = '5.0.0';
+  version = '5.0.1';
   icon = 'src/cn/drxsw/logo.png';
 
   imageRequestInit = {
@@ -269,34 +269,36 @@ class drxswPlugin implements Plugin.PluginBase {
       summary_translate = undefined;
     }
 
-    const tabstitHtml = $('div.tabstit').html() || '';
-    //There is a problem with layout in source, so
-    // Match any characters ending with '小说' after a > or </i> tag
-    const genreMatch = tabstitHtml.match(/＞([^＞<]*?小说)/);
-    let genre = genreMatch?.[1].trim();
+    const $genre = $('div.tabstit')
+      .contents() // получаем детей, включая текст
+      .filter((_, el) => el.type === 'text') // оставляем только текстовые узлы
+      .map((_, el) => (el as any).data.trim()) // берём текст
+      .get()
+      .filter(txt => txt.length > 0); // убираем пустые строки
+    let genre = $genre[0] || '';
     switch (genre) {
-      case '玄幻':
+      case '玄幻小说':
         genre = 'Fantasy';
         break;
-      case '武俠':
+      case '武俠小说':
         genre = 'Martial Arts';
         break;
-      case '都市':
+      case '都市小说':
         genre = 'Urban';
         break;
-      case '歷史':
+      case '歷史小说':
         genre = 'History';
         break;
-      case '遊戲':
+      case '遊戲小说':
         genre = 'Games';
         break;
-      case '科幻':
+      case '科幻小说':
         genre = 'Science Fiction';
         break;
-      case '恐怖':
+      case '恐怖小说':
         genre = 'Horror';
         break;
-      case '其他':
+      case '其他小说':
         genre = 'Other';
         break;
     }
