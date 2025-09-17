@@ -4,6 +4,133 @@ import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 
+/**
+ * Разбивает текст на абзацы
+ */
+/**
+ * Разбивает текст на логические абзацы
+ * Делит по <br> и <p> тегам
+ */
+function splitParagraphs(htmlText: string): string[] {
+  let text = htmlText
+    // <p> и </p> превращаем в переносы строк
+    .replace(/<\/p\s*>/gi, '\n')
+    .replace(/<p[^>]*>/gi, '\n')
+    // <br> превращаем в переносы строк
+    .replace(/<br\s*\/?>/gi, '\n')
+    // убираем все оставшиеся теги
+    .replace(/<[^>]+>/g, '')
+    // нормализуем пробелы
+    .replace(/\u3000/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .trim();
+
+  // разбиваем по переносам строк (одиночным или двойным)
+  const paragraphs = text
+    .split(/\n+/)
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+  return paragraphs;
+}
+
+/**
+ * Делим длинный абзац на куски по знакам препинания или словам
+ */
+function splitLongParagraph(
+  paragraph: string,
+  maxChunkSize: number = 1000,
+): string[] {
+  if (paragraph.length <= maxChunkSize) return [paragraph];
+
+  // сначала делим по "силовым" разделителям
+  const delimiters = /([。.!?！？])/g;
+  let parts = paragraph.split(delimiters).reduce((acc: string[], curr) => {
+    if (acc.length === 0) return [curr];
+    if ((acc[acc.length - 1] + curr).length > maxChunkSize) acc.push(curr);
+    else acc[acc.length - 1] += curr;
+    return acc;
+  }, [] as string[]);
+
+  // если всё ещё длинные куски, делим по словам
+  parts = parts.flatMap(p => {
+    if (p.length <= maxChunkSize) return [p];
+    const words = p.split(/\s+/);
+    const wordChunks: string[] = [];
+    let current = '';
+    for (const w of words) {
+      if ((current + ' ' + w).trim().length > maxChunkSize) {
+        if (current) wordChunks.push(current.trim());
+        current = w;
+      } else {
+        current = (current + ' ' + w).trim();
+      }
+    }
+    if (current) wordChunks.push(current.trim());
+    return wordChunks;
+  });
+
+  return parts;
+}
+
+/**
+ * Основная функция, создающая готовые к переводу куски
+ */
+export function makeChunksFromHTML(
+  htmlText: string,
+  maxChunkSize: number = 1000,
+): string[] {
+  const paragraphs = splitParagraphs(htmlText);
+  const chunks: string[] = [];
+
+  for (const p of paragraphs) {
+    const pChunks = splitLongParagraph(p, maxChunkSize);
+    chunks.push(...pChunks);
+  }
+
+  return chunks;
+}
+
+/**
+ * Перевод одного куска текста через Google Translate
+ */
+async function translateChunk(
+  chunk: string,
+  targetLang: string,
+): Promise<string> {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=${targetLang}&dt=t&q=${encodeURIComponent(chunk)}`;
+  const res = await fetch(url);
+  if (!res.ok)
+    throw new Error(
+      `Translate request failed with status ${res.status} ${chunk}`,
+    );
+  const data = await res.json();
+  return data[0].map((d: any) => d[0]).join('');
+}
+
+/**
+ * Основная функция перевода
+ * Используется как: await translate('текст для перевода', 'ru')
+ */
+export async function translate(
+  text: string,
+  targetLang: string,
+): Promise<string> {
+  if (text.length < 2) return text;
+  const chunks = makeChunksFromHTML(text, 1000);
+
+  const translations: string[] = [];
+  for (const chunk of chunks) {
+    const translated = await translateChunk(chunk, targetLang);
+    translations.push(translated);
+    // пауза 500ms между запросами, чтобы снизить нагрузку на сервис
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  // return translations.join('<br>\n\n');
+  return translations.map(p => `<p>${p}</p>`).join('\n');
+}
+
 const makeAbsolute = (
   relativeUrl: string | undefined,
   baseUrl: string,
@@ -113,6 +240,11 @@ class shuku52Plugin implements Plugin.PluginBase {
       .not('.con_pc')
       .map((_, el) => $(el).text().trim())
       .get()[1]; // get second element (index 1)
+    let summary_translate: string | undefined;
+    if (summary) {
+      summary_translate = await translate(summary, 'ru');
+      summary_translate = summary_translate.replace(/<[^>]+>/g, ''); // strip tags just in case
+    }
 
     // === Chapters ===
     const chapters: Plugin.ChapterItem[] = [];
@@ -134,7 +266,7 @@ class shuku52Plugin implements Plugin.PluginBase {
       path: novelPath,
       name: novelName,
       cover: defaultCover, // no cover in this structure
-      summary: summary,
+      summary: summary_translate,
       author: author,
       genres: undefined,
       status:
@@ -201,6 +333,8 @@ class shuku52Plugin implements Plugin.PluginBase {
       .replace(/[\t ]+/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
+
+    chapterText = await translate(chapterText, 'ru');
 
     return chapterText;
   }
