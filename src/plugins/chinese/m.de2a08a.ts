@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '10.1.1';
+  version = '11.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -386,7 +386,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     // This site only returns first page, skip others
     if (pageNo > 1) return [];
 
-    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=on`;
 
     const response = await fetch(url, {
       headers: {
