@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '8.1.1';
+  version = '9.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -383,43 +383,47 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    // Only first page is supported on this site
+    // This site only returns first page, skip others
     if (pageNo > 1) return [];
 
-    // Build the search URL
-    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    const url = `https://m.57ae58c447.cfd/user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
 
-    // Make the request
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0',
-        'Accept': 'application/json', // ask for JSON (site ignores this)
-        'X-Requested-With': 'XMLHttpRequest', // simulate XHR
-        'Referer': `${this.site}s?q=${encodeURIComponent(searchTerm)}`,
+        'accept': 'application/json',
+        'referer': `https://m.57ae58c447.cfd/s?q=${encodeURIComponent(searchTerm)}`,
+        'sec-ch-ua':
+          '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'user-agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+        'x-requested-with': 'XMLHttpRequest',
+        'dnt': '1',
       },
     });
 
     if (!response.ok) throw new Error('Failed to fetch search results');
 
-    // --- Critical: read as text because server sends text/html ---
     const text = await response.text();
 
-    // Try parsing JSON manually
-    let data: any[] = [];
+    // Handle case when response is "1" (no results)
+    if (text.trim() === '1') return [];
+
+    let data: any[];
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(text); // parse JSON-as-HTML
     } catch (err) {
-      console.error('Failed to parse JSON from site response', err);
+      console.error('Failed to parse search results:', err);
       return [];
     }
 
-    // Map raw site data to Plugin.NovelItem[]
     const novels: Plugin.NovelItem[] = data.map((item: any) => ({
-      path: item.url_list, // relative path
+      path: item.url_list, // relative URL
       cover: item.url_img, // full cover URL
-      name: item.articlename, // novel title
+      name: item.articlename, // novel name
       author: item.author, // author
-      summary: item.intro, // short intro/summary
+      summary: item.intro, // short intro
     }));
 
     return novels;
