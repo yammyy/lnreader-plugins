@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '6.1.1';
+  version = '7.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -383,34 +383,43 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    // This site only returns first page, so skip others
+    // Only first page is supported on this site
     if (pageNo > 1) return [];
 
-    // Build URL for XHR JSON endpoint
-    const params = new URLSearchParams({ q: searchTerm, so: 'undefined' });
-    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    // Build the search URL
+    const url = `https://m.57ae58c447.cfd/user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
 
-    // Fetch JSON directly
+    // Make the request
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0',
-        'Accept': 'application/json,text/javascript,*/*;q=0.01',
+        'Accept': 'application/json', // ask for JSON (site ignores this)
+        'X-Requested-With': 'XMLHttpRequest', // simulate XHR
+        'Referer': `https://m.57ae58c447.cfd/s?q=${encodeURIComponent(searchTerm)}`,
       },
     });
 
     if (!response.ok) throw new Error('Failed to fetch search results');
 
-    const data = await response.json();
+    // --- Critical: read as text because server sends text/html ---
+    const text = await response.text();
 
-    throw new Error(data.length());
+    // Try parsing JSON manually
+    let data: any[] = [];
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error('Failed to parse JSON from site response', err);
+      return [];
+    }
 
-    // Map JSON into Plugin.NovelItem[]
+    // Map raw site data to Plugin.NovelItem[]
     const novels: Plugin.NovelItem[] = data.map((item: any) => ({
-      path: item.url_list, // relative URL
+      path: item.url_list, // relative path
       cover: item.url_img, // full cover URL
-      name: item.articlename, // novel name
+      name: item.articlename, // novel title
       author: item.author, // author
-      summary: item.intro, // short intro
+      summary: item.intro, // short intro/summary
     }));
 
     return novels;
