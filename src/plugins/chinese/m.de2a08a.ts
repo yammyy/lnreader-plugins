@@ -44,7 +44,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.de2a0a8.xyz';
-  version = '1.1.1';
+  version = '1.3.0';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -202,20 +202,25 @@ class mde2a08aPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const chapterUrl = new URL(chapterPath, this.site).toString();
-    const body = await fetchText(chapterUrl, this.fetchOptions); // Header hinzugefügt
+    const body = await fetchText(chapterUrl, this.fetchOptions);
 
-    const loadedCheerio = parseHTML(body);
+    const $ = parseHTML(body);
 
-    const chapterText = loadedCheerio('#chaptercontent p')
-      .map((i, el) => loadedCheerio(el).text())
-      .get()
-      // remove empty lines and 69shu ads
-      .map((line: string) => line.trim())
-      .filter((line: string) => line !== '' && !line.includes('69书吧'))
-      .map((line: string) => `<p>${line}</p>`)
-      .join('\n');
+    // Select the chapter content container
+    const $content = $('#chaptercontent').clone();
 
-    return chapterText;
+    // Remove all direct <p> children (but keep other tags)
+    $content.children('p').remove();
+
+    // Get cleaned HTML
+    const chapterHtml =
+      $content
+        .html()
+        ?.trim()
+        // Optionally filter ads or junk strings if needed
+        .replace(/69书吧/g, '') || '';
+
+    return chapterHtml;
   }
 
   async searchNovels(
@@ -224,82 +229,31 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   ): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
 
-    const searchUrl = `${this.site}/search`;
-    const formData = new FormData();
-    formData.append('searchkey', searchTerm);
+    // Search URL with query param
+    const searchUrl = `${this.site}/s?q=${encodeURIComponent(searchTerm)}`;
 
-    const searchOptions = {
-      ...this.fetchOptions,
-      method: 'post',
-      body: formData,
-      headers: {
-        ...this.fetchOptions.headers,
-      },
-    };
-
-    const body = await fetchText(searchUrl, searchOptions);
+    const body = await fetchText(searchUrl, this.fetchOptions);
     if (body === '') throw Error('无法获取搜索结果，请检查网络');
 
-    const loadedCheerio = parseHTML(body);
-
+    const $ = parseHTML(body);
     const novels: Plugin.NovelItem[] = [];
 
-    loadedCheerio('div.book-coverlist').each((i, el) => {
-      const url = loadedCheerio(el).find('a.cover').attr('href');
+    $('div.wrap div.block.so_list div.hot div.item').each((_, el) => {
+      const novelPath = $(el).find('div.image a').attr('href');
+      const novelCover = $(el).find('div.image a img').attr('src');
+      const novelName = $(el).find('div.image a img').attr('alt');
 
-      const novelName = loadedCheerio(el).find('h4.name').text().trim();
-      const novelCover = loadedCheerio(el).find('a.cover > img').attr('src');
+      if (!novelPath) return;
 
-      if (!url) return;
-
-      const novel = {
-        name: novelName,
-        cover: novelCover,
-        path: url.replace(this.site, ''),
-      };
-
-      novels.push(novel);
+      novels.push({
+        name: novelName?.trim() || 'Untitled',
+        cover: novelCover || undefined,
+        path: novelPath.replace(this.site, ''),
+      });
     });
 
     return novels;
   }
-
-  filters = {
-    rank: {
-      label: '排行榜',
-      value: 'allvisit',
-      options: [
-        { label: '总排行榜', value: 'allvisit' },
-        { label: '月排行榜', value: 'monthvisit' },
-        { label: '周排行榜', value: 'weekvisit' },
-        { label: '日排行榜', value: 'dayvisit' },
-        { label: '收藏榜', value: 'goodnum' },
-        { label: '字数榜', value: 'words' },
-        { label: '推荐榜', value: 'allvote' },
-        { label: '新书榜', value: 'postdate' },
-        { label: '更新榜', value: 'lastupdate' },
-      ],
-      type: FilterTypes.Picker,
-    },
-    sort: {
-      label: '分类',
-      value: 'none',
-      options: [
-        { label: '无', value: 'none' },
-        { label: '全部', value: 'all' },
-        { label: '玄幻', value: 'xuanhuan' },
-        { label: '仙侠', value: 'xianxia' },
-        { label: '都市', value: 'dushi' },
-        { label: '历史', value: 'lishi' },
-        { label: '游戏', value: 'youxi' },
-        { label: '科幻', value: 'kehuan' },
-        { label: '灵异', value: 'kongbu' },
-        { label: '言情', value: 'nvsheng' },
-        { label: '其它', value: 'qita' },
-      ],
-      type: FilterTypes.Picker,
-    },
-  } satisfies Filters;
 }
 
 export default new mde2a08aPlugin();
