@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '7.1.1';
+  version = '8.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -387,7 +387,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     if (pageNo > 1) return [];
 
     // Build the search URL
-    const url = `https://m.57ae58c447.cfd/user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
 
     // Make the request
     const response = await fetch(url, {
@@ -395,7 +395,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
         'User-Agent': 'Mozilla/5.0',
         'Accept': 'application/json', // ask for JSON (site ignores this)
         'X-Requested-With': 'XMLHttpRequest', // simulate XHR
-        'Referer': `https://m.57ae58c447.cfd/s?q=${encodeURIComponent(searchTerm)}`,
+        'Referer': `${this.site}s?q=${encodeURIComponent(searchTerm)}`,
       },
     });
 
