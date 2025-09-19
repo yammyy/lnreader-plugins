@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.de2a0a8.xyz';
-  version = '2.1.1';
+  version = '3.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -240,19 +240,45 @@ class mde2a08aPlugin implements Plugin.PluginBase {
       .trim();
 
     // --- Author ---
-    const authorText = $infoSection
-      .find('div.book_box dl dd.dd_box span')
-      .first()
-      .text()
-      .trim();
+    const $ddSpans = $infoSection.find('div.book_box dl dd.dd_box span');
+    const authorText = $ddSpans.first().text().trim();
     const author = authorText.replace(/^.*?作者：/, '').trim() || undefined;
 
-    // --- Status ---
-    const statusText = $infoSection
-      .find('div.book_box dl dd.dd_box span')
-      .eq(1) // second span
+    // --- Genre ---
+    const genreText = $ddSpans
+      .eq(1)
       .text()
-      .trim();
+      .trim()
+      .replace(/^.*?分类：/, '');
+    let genre: string | undefined = undefined;
+    switch (genreText) {
+      case '玄幻':
+        genre = 'Fantasy';
+        break;
+      case '武侠':
+        genre = 'Martial Arts';
+        break;
+      case '都市':
+        genre = 'Urban';
+        break;
+      case '历史':
+        genre = 'History';
+        break;
+      case '网游':
+        genre = 'Games';
+        break;
+      case '科幻':
+        genre = 'Science Fiction';
+        break;
+      case '女生':
+        genre = 'Girls';
+        break;
+      default:
+        genre = undefined;
+    }
+
+    // --- Status ---
+    const statusText = $ddSpans.eq(1).text().trim(); // same span as genre
     let detail: 'Ongoing' | 'Completed' | 'Unknown' = 'Unknown';
     if (statusText.includes('已经完本')) {
       detail = 'Completed';
@@ -277,7 +303,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
       cover: novelCover,
       summary: translated_summary || undefined,
       author,
-      genres: undefined, // not available here
+      genres: genre,
       status:
         detail === 'Ongoing'
           ? NovelStatus.Ongoing
@@ -357,30 +383,33 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
+    // This site only returns first page, so skip others
     if (pageNo > 1) return [];
 
-    // Search URL with query param
-    const searchUrl = `${this.site}/s?q=${encodeURIComponent(searchTerm)}`;
+    // Build URL for XHR JSON endpoint
+    const params = new URLSearchParams({ q: searchTerm, so: 'undefined' });
+    const url = `${this.site}/user/search.html?${params.toString()}`;
 
-    const body = await fetchText(searchUrl, this.fetchOptions);
-    if (body === '') throw Error('无法获取搜索结果，请检查网络');
-
-    const $ = parseHTML(body);
-    const novels: Plugin.NovelItem[] = [];
-
-    $('div.wrap div.block.so_list div.hot div.item').each((_, el) => {
-      const novelPath = $(el).find('div.image a').attr('href');
-      const novelCover = $(el).find('div.image a img').attr('src');
-      const novelName = $(el).find('div.image a img').attr('alt');
-
-      if (!novelPath) return;
-
-      novels.push({
-        name: novelName?.trim() || 'Untitled',
-        cover: novelCover || undefined,
-        path: novelPath.replace(this.site, ''),
-      });
+    // Fetch JSON directly
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+        'Accept': 'application/json,text/javascript,*/*;q=0.01',
+      },
     });
+
+    if (!response.ok) throw new Error('Failed to fetch search results');
+
+    const data = await response.json();
+
+    // Map JSON into Plugin.NovelItem[]
+    const novels: Plugin.NovelItem[] = data.map((item: any) => ({
+      path: item.url_list, // relative URL
+      cover: item.url_img, // full cover URL
+      name: item.articlename, // novel name
+      author: item.author, // author
+      summary: item.intro, // short intro
+    }));
 
     return novels;
   }
