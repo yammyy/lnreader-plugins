@@ -170,8 +170,8 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   id = 'bokuge';
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
-  site = 'https://m.de2a0a8.xyz';
-  version = '4.1.1';
+  site = 'https://m.57ae58c447.cfd/';
+  version = '6.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -388,7 +388,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
 
     // Build URL for XHR JSON endpoint
     const params = new URLSearchParams({ q: searchTerm, so: 'undefined' });
-    const url = `https://m.57ae58c447.cfd/user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
 
     // Fetch JSON directly
     const response = await fetch(url, {
@@ -401,6 +401,8 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     if (!response.ok) throw new Error('Failed to fetch search results');
 
     const data = await response.json();
+
+    throw new Error(data.length());
 
     // Map JSON into Plugin.NovelItem[]
     const novels: Plugin.NovelItem[] = data.map((item: any) => ({
