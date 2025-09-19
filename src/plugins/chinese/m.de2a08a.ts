@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '9.1.1';
+  version = '10.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -386,12 +386,12 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     // This site only returns first page, skip others
     if (pageNo > 1) return [];
 
-    const url = `https://m.57ae58c447.cfd/user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
 
     const response = await fetch(url, {
       headers: {
         'accept': 'application/json',
-        'referer': `https://m.57ae58c447.cfd/s?q=${encodeURIComponent(searchTerm)}`,
+        'referer': `${this.site}s?q=${encodeURIComponent(searchTerm)}`,
         'sec-ch-ua':
           '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
         'sec-ch-ua-mobile': '?0',
@@ -408,7 +408,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
     const text = await response.text();
 
     // Handle case when response is "1" (no results)
-    if (text.trim() === '1') return [];
+    if (text.trim() === '1') throw new Error('No results');
 
     let data: any[];
     try {
