@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '12.1.1';
+  version = '13.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -355,54 +355,75 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    let fullHtml = '';
-    let currentUrl: string | undefined = new URL(
-      chapterPath,
-      this.site,
-    ).toString();
+    // Start from absolute chapter URL (handles relative or absolute input)
+    let currentUrl = new URL(chapterPath, this.site).toString();
 
-    while (currentUrl) {
+    // Base path of the chapter used to decide if next link is "same chapter part"
+    // e.g. "/book/61808/1183"
+    const initialBasePath = new URL(currentUrl).pathname.replace(
+      /_\d+\.html$|\.html$/i,
+      '',
+    );
+
+    const parts: string[] = [];
+    let safetyCounter = 0;
+    const MAX_PAGES = 50; // safety to prevent infinite loops
+
+    while (currentUrl && safetyCounter < MAX_PAGES) {
+      safetyCounter++;
+
       const body = await fetchText(currentUrl, this.fetchOptions);
       const $ = parseHTML(body);
 
       // --- Extract content ---
       const $content = $('#chaptercontent').clone();
-
-      // Remove direct <p> children (ads/junk wrappers), keep rest
+      // remove direct <p> children if they are wrappers/ads (preserve other tags)
       $content.children('p').remove();
 
-      // Clean HTML
-      const chapterHtml =
-        $content
-          .html()
-          ?.trim()
-          .replace(/69书吧/g, '') || '';
-
-      fullHtml += chapterHtml + '\n';
-
-      // --- Find "next page" ---
-      const nextHref = $('#pb_next').attr('href');
-      if (!nextHref) break;
-
-      // Normalize to absolute URL
-      const nextUrl = new URL(nextHref, this.site).toString();
-
-      // If next page belongs to a *different chapter*, stop
-      const currentBase = chapterPath
-        .replace(/_\d+\.html$/, '')
-        .replace(/\.html$/, '');
-      const nextBase = nextHref
-        .replace(/_\d+\.html$/, '')
-        .replace(/\.html$/, '');
-      if (nextBase !== currentBase) {
-        break; // different chapter
+      // get cleaned HTML and strip known junk strings
+      let chapterHtml = $content.html()?.trim() ?? '';
+      if (chapterHtml) {
+        chapterHtml = chapterHtml
+          .replace(/69书吧/g, '')
+          .replace(/请收藏：https?:\/\/m\.57ae58c447\.cfd/gi, '');
+        parts.push(chapterHtml);
       }
 
-      // Continue loop with next page
+      // --- Find "next page" link (could be relative or absolute) ---
+      const nextHrefRaw = $('#pb_next').attr('href');
+      if (!nextHrefRaw) break;
+
+      // ignore anchors / javascript pseudo-links
+      if (nextHrefRaw.startsWith('#') || /^javascript:/i.test(nextHrefRaw))
+        break;
+
+      // make absolute URL for the next page
+      const nextUrl = new URL(nextHrefRaw, currentUrl).toString();
+
+      // Avoid infinite loop if it points to the same URL
+      if (nextUrl === currentUrl) break;
+
+      // Compute base path for next page and compare to initial base.
+      // If they differ, the next link points to a new chapter (stop).
+      const nextBasePath = new URL(nextUrl).pathname.replace(
+        /_\d+\.html$|\.html$/i,
+        '',
+      );
+      if (nextBasePath !== initialBasePath) break;
+
+      // Otherwise continue with next part of the same chapter
       currentUrl = nextUrl;
     }
 
-    // --- Translate only once, after concatenation ---
+    if (safetyCounter >= MAX_PAGES) {
+      console.warn(
+        'parseChapter: reached max pages while following chapter parts',
+      );
+    }
+
+    const fullHtml = parts.join('\n');
+
+    // Translate once (you already used translate elsewhere)
     const translated_chapter = await translate(fullHtml, 'ru');
 
     return translated_chapter;
