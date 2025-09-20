@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.57ae58c447.cfd/';
-  version = '11.1.1';
+  version = '12.1.1';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -355,26 +355,55 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const chapterUrl = new URL(chapterPath, this.site).toString();
-    const body = await fetchText(chapterUrl, this.fetchOptions);
+    let fullHtml = '';
+    let currentUrl: string | undefined = new URL(
+      chapterPath,
+      this.site,
+    ).toString();
 
-    const $ = parseHTML(body);
+    while (currentUrl) {
+      const body = await fetchText(currentUrl, this.fetchOptions);
+      const $ = parseHTML(body);
 
-    // Select the chapter content container
-    const $content = $('#chaptercontent').clone();
+      // --- Extract content ---
+      const $content = $('#chaptercontent').clone();
 
-    // Remove all direct <p> children (but keep other tags)
-    $content.children('p').remove();
+      // Remove direct <p> children (ads/junk wrappers), keep rest
+      $content.children('p').remove();
 
-    // Get cleaned HTML
-    const chapterHtml =
-      $content
-        .html()
-        ?.trim()
-        // Optionally filter ads or junk strings if needed
-        .replace(/69书吧/g, '') || '';
+      // Clean HTML
+      const chapterHtml =
+        $content
+          .html()
+          ?.trim()
+          .replace(/69书吧/g, '') || '';
 
-    const translated_chapter = await translate(chapterHtml, 'ru');
+      fullHtml += chapterHtml + '\n';
+
+      // --- Find "next page" ---
+      const nextHref = $('#pb_next').attr('href');
+      if (!nextHref) break;
+
+      // Normalize to absolute URL
+      const nextUrl = new URL(nextHref, this.site).toString();
+
+      // If next page belongs to a *different chapter*, stop
+      const currentBase = chapterPath
+        .replace(/_\d+\.html$/, '')
+        .replace(/\.html$/, '');
+      const nextBase = nextHref
+        .replace(/_\d+\.html$/, '')
+        .replace(/\.html$/, '');
+      if (nextBase !== currentBase) {
+        break; // different chapter
+      }
+
+      // Continue loop with next page
+      currentUrl = nextUrl;
+    }
+
+    // --- Translate only once, after concatenation ---
+    const translated_chapter = await translate(fullHtml, 'ru');
 
     return translated_chapter;
   }
