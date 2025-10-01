@@ -156,7 +156,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '4.0.0';
+  version = '4.0.1';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -249,13 +249,13 @@ class Novel543Plugin implements Plugin.PluginBase {
         genre = 'Urban';
         break;
       case '歷史':
-        genre = 'History';
+        genre = 'Historical';
         break;
       case '網遊':
         genre = 'Games';
         break;
       case '科幻':
-        genre = 'Science Fiction';
+        genre = 'Sci-Fi';
         break;
       case '女頻':
         genre = 'Female';
