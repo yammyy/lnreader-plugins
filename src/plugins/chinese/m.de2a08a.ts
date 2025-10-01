@@ -161,7 +161,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
       'Accept':
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,us;q=0.5',
-      'Referer': 'https://m.de2a0a8.xyz/', // Referer
+      'Referer': 'https://3b95ec29f71.2cabe16.xyz/', // Referer
       'DNT': '1', // Do Not Track
       'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
     },
@@ -170,8 +170,8 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   id = 'bokuge';
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
-  site = 'https://m.57ae58c447.cfd/';
-  version = '13.1.3';
+  site = 'https://3b95ec29f71.2cabe16.xyz/';
+  version = '13.2.3';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];

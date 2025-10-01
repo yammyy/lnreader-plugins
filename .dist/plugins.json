@@ -20,9 +20,9 @@
 	{
 		"id": "bokuge",
 		"name": "笔趣阁",
-		"site": "https://m.57ae58c447.cfd/",
+		"site": "https://3b95ec29f71.2cabe16.xyz/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "13.1.3",
+		"version": "13.2.3",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/m.de2a08a.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/mde2a0a8/icon.png"
 	},
