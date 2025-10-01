@@ -171,7 +171,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://3b95ec29f71.2cabe16.xyz/';
-  version = '13.2.3';
+  version = '13.2.4';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -268,7 +268,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
         genre = 'Games';
         break;
       case '科幻':
-        genre = 'Sci-Fi';
+        genre = 'Sci-fi';
         break;
       case '女生':
         genre = 'Girls';

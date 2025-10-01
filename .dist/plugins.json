@@ -22,7 +22,7 @@
 		"name": "笔趣阁",
 		"site": "https://3b95ec29f71.2cabe16.xyz/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "13.2.3",
+		"version": "13.2.4",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/m.de2a08a.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/mde2a0a8/icon.png"
 	},
@@ -31,7 +31,7 @@
 		"name": "冬日小说网",
 		"site": "https://www.drxsw.com/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "5.0.2",
+		"version": "5.0.3",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/drxsw.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/drxsw/logo.png"
 	},
@@ -40,7 +40,7 @@
 		"name": "爱下电子书",
 		"site": "https://ixdzs8.com/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "5.0.2",
+		"version": "5.0.3",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/ixdzs8.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/ixdzs8/favicon.png"
 	},
@@ -49,7 +49,7 @@
 		"name": "Novel543",
 		"site": "https://www.novel543.com/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "4.0.1",
+		"version": "4.0.2",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/novel543.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/novel543/icon.png"
 	},

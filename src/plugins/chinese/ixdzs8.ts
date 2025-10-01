@@ -156,7 +156,7 @@ class ixdzs8Plugin implements Plugin.PluginBase {
   id = 'ixdzs8';
   name = '爱下电子书';
   site = 'https://ixdzs8.com/';
-  version = '5.0.2';
+  version = '5.0.3';
   icon = 'src/cn/ixdzs8/favicon.png';
 
   imageRequestInit = {
@@ -249,7 +249,7 @@ class ixdzs8Plugin implements Plugin.PluginBase {
         genre = 'Games';
         break;
       case '科幻灵异':
-        genre = 'Sci-Fi';
+        genre = 'Sci-fi';
         break;
       case '言情穿越':
         genre = 'Romance';

@@ -156,7 +156,7 @@ class drxswPlugin implements Plugin.PluginBase {
   id = 'drxsw';
   name = '冬日小说网';
   site = 'https://www.drxsw.com/';
-  version = '5.0.2';
+  version = '5.0.3';
   icon = 'src/cn/drxsw/logo.png';
 
   imageRequestInit = {
@@ -293,7 +293,7 @@ class drxswPlugin implements Plugin.PluginBase {
         genre = 'Games';
         break;
       case '科幻小说':
-        genre = 'Sci-Fi';
+        genre = 'Sci-fi';
         break;
       case '恐怖小说':
         genre = 'Horror';
