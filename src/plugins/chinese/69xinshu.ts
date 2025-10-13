@@ -1,7 +1,6 @@
 import { load as parseHTML } from 'cheerio';
 import { fetchText, fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
-import { encode } from 'urlencode';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
 
@@ -9,51 +8,34 @@ class XinShu69 implements Plugin.PluginBase {
   id = '69xinshu';
   name = '69书吧';
   icon = 'src/cn/69xinshu/icon.png';
-  site = 'https://69shuba.com/';
-  version = '1.1.2';
+  site = 'https://www.69yue.top/';
+  version = '5.1.2';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
-    if (pageNo > 1) return [];
+    const apiUrl = `${this.site}api/list/0/0/1/${pageNo}.json`;
+    const result = await fetchApi(apiUrl);
+    if (!result.ok) return [];
 
-    const urls = [this.site + 'novels/female', this.site + 'novels/male'];
+    const json = await result.json();
 
-    const novels: Plugin.NovelItem[] = [];
-    const processedPaths = new Set<string>();
-
-    for (const url of urls) {
-      const result = await fetchApi(url);
-      if (!result.ok) continue;
-
-      const $ = parseHTML(await result.text());
-
-      // Traverse all div.mybox
-      $('div.mybox').each((_i, myboxEl) => {
-        const $mybox = $(myboxEl);
-
-        // Traverse li > div > div.newbox > ul#article_list_content > li
-        $mybox
-          .find('ul > li > div > div.newbox > ul#article_list_content > li')
-          .each((_j, liEl) => {
-            const $li = $(liEl);
-            const $link = $li.find('a').first();
-            const novelPath = $link.attr('href')?.trim();
-            const novelCover =
-              $link.find('img').attr('src') ||
-              $link.find('img').attr('data-src') ||
-              defaultCover;
-            const novelName = $li.find('div.newnav > h3').text().trim();
-
-            if (novelPath && novelName && !processedPaths.has(novelPath)) {
-              novels.push({
-                name: novelName,
-                path: novelPath,
-                cover: novelCover,
-              });
-              processedPaths.add(novelPath);
-            }
-          });
-      });
+    if (json.code !== 200 || !Array.isArray(json.data)) {
+      throw new Error('Invalid API response');
     }
+
+    const novels: Plugin.NovelItem[] = json.data.map((item: any) => ({
+      name: item.title.trim(),
+      path: item.infourl.trim(),
+      cover: item.coverUrl?.trim()
+        ? item.coverUrl.startsWith('/')
+          ? this.site + item.coverUrl.replace(/^\//, '')
+          : item.coverUrl
+        : defaultCover,
+      author: item.author?.trim() || '',
+      description: item.description?.trim() || '',
+      status: item.status?.trim() || '',
+      category: item.categoryName?.trim() || '',
+      lastUpdate: item.lastUpdated?.trim() || '',
+    }));
 
     return novels;
   }
@@ -67,50 +49,33 @@ class XinShu69 implements Plugin.PluginBase {
 
     const $ = parseHTML(await result.text());
 
-    // === Novel info in div.container > li.col-8 > div.mybox > div.bookbox ===
-    const $bookbox = $(
-      'div.container ul li.col-8 div.mybox div.bookbox',
-    ).first();
+    // === Novel cover ===
+    const novelCover =
+      $('main div div div div div div div img.object-cover')
+        .attr('src')
+        ?.trim() || defaultCover;
 
-    // Cover
-    const cover = $bookbox.find('div.bookimg2 img').attr('src') || defaultCover;
-
-    // Novel name (h1) — get text of children
-    const h1Text = $bookbox
-      .find('div.booknav2 h1')
-      .contents()
-      .map((_, el) => $(el).text())
-      .get()
-      .join('')
-      .trim();
-    let novelName = h1Text;
-
-    // Author (first p > a)
-    const author =
-      $bookbox.find('div.booknav2 p:nth-of-type(1) a').text().trim() ||
-      undefined;
-
-    // Genres (second p > a)
-    const genreText = $bookbox
-      .find('div.booknav2 p:nth-of-type(2) a')
+    // === Novel name ===
+    const novelName = $('main div div div div div div h1')
+      .first()
       .text()
       .trim();
-    let genre = genreText || '';
+
+    // === Genre ===
+    let genre = $('main div div div div div div div p.text-base a')
+      .first()
+      .text()
+      .trim();
+    genre = genre || '';
     switch (genre) {
-      case '言情小说':
-        genre = 'Romance';
-        break;
       case '玄幻魔法':
         genre = 'Fantasy';
         break;
       case '修真武侠':
         genre = 'Martial Arts';
         break;
-      case '穿越时空':
-        genre = 'Time Travel';
-        break;
-      case '都市小说':
-        genre = 'Urban';
+      case '言情小说':
+        genre = 'Romance';
         break;
       case '历史军事':
         genre = 'Historical';
@@ -127,79 +92,81 @@ class XinShu69 implements Plugin.PluginBase {
       case '同人小说':
         genre = 'Fan Fiction';
         break;
+      case '都市小说':
+        genre = 'Urban';
+        break;
       case '官场职场':
         genre = 'Work Life';
+        break;
+      case '穿越时空':
+        genre = 'Time Travel';
         break;
       case '青春校园':
         genre = 'School Life';
         break;
+      case '其他':
+        genre = 'Other';
+        break;
     }
 
-    // Status (third p)
-    const statusText = $bookbox
-      .find('div.booknav2 p:nth-of-type(3)')
+    // === Status ===
+    let statusText = $('main div div div div div div div p.text-base')
+      .filter((_i, el) => {
+        const txt = $(el).text();
+        return txt.includes('连载中') || txt.includes('完本');
+      })
       .text()
       .trim();
+
     let status = '';
-    if (statusText.includes('连载')) {
-      status = NovelStatus.Ongoing;
-    } else if (statusText.includes('全本')) {
-      status = NovelStatus.Completed;
-    } else {
-      status = NovelStatus.Unknown;
-    }
+    if (statusText.includes('连载中')) status = NovelStatus.Ongoing;
+    else if (statusText.includes('完本')) status = NovelStatus.Completed;
+    else status = NovelStatus.Unknown;
 
-    // === Summary ===
-    let summary: string | undefined;
-    const summaryP = $bookbox
-      .find('div.booknav2 p')
-      .not(':nth-of-type(-n+3)')
-      .first(); // skip first 3 p's
-    if (summaryP.length) {
-      summary = summaryP.text().trim();
-      if (summary) {
-        summary = await translate(summary, 'ru');
-        summary = summary.replace(/<[^>]+>/g, ''); // strip tags
-      }
-    }
+    // === Get chapter list link ===
+    const chapterListPath = $('div#load-more-container a').attr('href')?.trim();
+    const chapterListUrl = chapterListPath
+      ? makeAbsolute(chapterListPath, this.site)
+      : undefined;
 
-    // === Chapter list link ===
-    const chapterListPath = $('div.container div.mybox a[href]')
-      .attr('href')
-      ?.trim();
+    // === Fetch chapters ===
     const chapters: Plugin.ChapterItem[] = [];
+    if (chapterListUrl) {
+      const chapterRes = await fetchApi(chapterListUrl);
+      if (chapterRes.ok) {
+        const $$ = parseHTML(await chapterRes.text());
 
-    if (chapterListPath) {
-      const chapterUrl = makeAbsolute(chapterListPath, this.site);
-      if (!chapterUrl) throw new Error('Invalid chapter list URL');
-      const chapterResult = await fetchApi(chapterUrl);
-      if (chapterResult.ok) {
-        const $chaptersPage = parseHTML(await chapterResult.text());
+        $$('#chapter-list-grid a').each((_i, el) => {
+          const $el = $$(el);
+          const chapterPath = $el.attr('href')?.trim();
+          const chapterName = $el.text().trim();
 
-        $chaptersPage('div.container div.mybox div.catalog ul li a').each(
-          (_i, el) => {
-            const $el = $($chaptersPage(el));
-            const chapterPath = ($el.attr('href') ?? '').trim();
-            const chapterName = $el.text().trim();
-
-            if (chapterPath && chapterName) {
-              chapters.push({
-                name: chapterName,
-                path: chapterPath,
-                releaseTime: undefined,
-              });
-            }
-          },
-        );
+          if (chapterPath && chapterName) {
+            chapters.push({
+              name: chapterName,
+              path: chapterPath,
+              releaseTime: undefined,
+            });
+          }
+        });
       }
     }
 
+    // === Summary (optional: none described) ===
+    /*    let summary: string | undefined;
+    let summary_translate: string | undefined;
+    if (summary) {
+      summary_translate = await translate(summary, 'ru');
+      summary_translate = summary_translate.replace(/<[^>]+>/g, '');
+    }*/
+
+    // === Assemble novel object ===
     const novel: Plugin.SourceNovel = {
       path: novelPath,
       name: novelName,
-      cover,
-      summary,
-      author,
+      cover: novelCover,
+      summary: undefined,
+      author: undefined,
       genres: genre,
       status,
       chapters,
@@ -217,36 +184,17 @@ class XinShu69 implements Plugin.PluginBase {
 
     const $ = parseHTML(await result.text());
 
-    // === Target main container ===
-    const $container = $('div.container div.mybox');
-    if (!$container.length) return 'Error: Could not find chapter container';
+    // === Chapter title ===
+    const title = $('main > header > h2').first().text().trim();
 
-    // === Get title from txtnav > h1 ===
-    const title = $container.find('div.txtnav h1').text().trim();
+    // === Target the inner article (the one containing <p>) ===
+    const $article = $('main > article > article').first();
+    if (!$article.length) return 'Error: Could not find chapter content';
 
-    // === Target the txtnav container ===
-    const $txtnav = $container.find('div.txtnav');
+    // Remove junk <div> inside the article
+    $article.find('div').remove();
 
-    // === Remove junk elements ===
-    $txtnav
-      .find('h1, div:first-child, div:nth-child(2), div.bottom-ad')
-      .remove();
-    // h1 = title, first 2 divs may be tools/ads, bottom-ad removed
-
-    // === Get remaining content ===
-    let resultHtml = '';
-    const $contentDiv = $txtnav.children('div').first(); // the div containing actual chapter text
-    if ($contentDiv.length) {
-      resultHtml = $contentDiv.html() || '';
-    }
-
-    // === Clean content ===
-    resultHtml = resultHtml
-      .replace(/<!--[\s\S]*?-->/g, '') // remove comments
-      .trim();
-
-    // === Get cleaned HTML ===
-    let rawHtml = resultHtml;
+    let rawHtml = $article.html() || '';
     if (!rawHtml) return 'Error: Chapter content was empty';
     rawHtml = '<h1>' + title + '</h1>' + '🐼<br>' + rawHtml;
     let chapterText = '';
@@ -262,59 +210,29 @@ class XinShu69 implements Plugin.PluginBase {
 
   async searchNovels(
     searchTerm: string,
-    pageNo: number,
+    _pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    if (pageNo > 1) return [];
+    const apiUrl = `${this.site}api/search`;
 
-    const searchUrl = `${this.site}/modules/article/search.php`;
-
-    const result = await fetchApi(searchUrl, {
+    const result = await fetch(apiUrl, {
       method: 'POST',
-      body: `searchkey=${encode(searchTerm, 'gbk')}&submit=Search`,
       headers: {
-        'content-type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        Referer: `${this.site}search.html?q=${encodeURIComponent(searchTerm)}`,
       },
+      body: `q=${encodeURIComponent(searchTerm)}`,
     });
 
-    // --- Handle Cloudflare / Captcha ---
-    if (result.status === 403) {
-      throw new Error('Captcha detected (HTTP 403), please open in webview.');
-    }
+    if (!result.ok) return [];
 
-    const html = await result.text();
-    const $ = parseHTML(html);
+    const data = await result.json();
+    if (data.code !== 200 || !Array.isArray(data.results)) return [];
 
-    // --- Parse novels from results ---
-    const novels: Plugin.NovelItem[] = [];
-
-    // Traverse search results
-    $('div.container div.mybox ul li').each((_i, liEl) => {
-      $(liEl)
-        .find('div.newbox > ul > li')
-        .each((_j, resEl) => {
-          const $res = $(resEl);
-          const novelPath = $res.find('a').attr('href')?.trim();
-          const novelCover =
-            $res.find('img').attr('src') ||
-            $res.find('img').attr('data-src') ||
-            defaultCover;
-          const novelName = $res
-            .find('div.newnav h3')
-            .contents()
-            .map((_, el) => $(el).text())
-            .get()
-            .join('')
-            .trim();
-
-          if (novelPath && novelName) {
-            novels.push({
-              name: novelName,
-              path: novelPath,
-              cover: makeAbsolute(novelCover, this.site) || defaultCover,
-            });
-          }
-        });
-    });
+    const novels: Plugin.NovelItem[] = data.results.map((item: any) => ({
+      name: item.title?.trim() || 'Unknown',
+      path: item.infourl?.trim() || '',
+      cover: defaultCover,
+    }));
 
     return novels;
   }
