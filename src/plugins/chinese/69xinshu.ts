@@ -1,15 +1,26 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchText, fetchApi } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
+
+function getSlug(path: string): string {
+  // Remove trailing slash if any
+  path = path.replace(/\/$/, '');
+
+  // Get last part after /
+  const lastPart = path.split('/').pop() || '';
+
+  // Remove extension
+  return lastPart.split('.')[0];
+}
 
 class XinShu69 implements Plugin.PluginBase {
   id = '69xinshu';
   name = '69书吧';
   icon = 'src/cn/69xinshu/icon.png';
   site = 'https://www.69yue.top/';
-  version = '9.1.2';
+  version = '36.1.2';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const apiUrl = `${this.site}api/list/0/0/1/${pageNo}.json`;
@@ -41,28 +52,41 @@ class XinShu69 implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novelUrl = makeAbsolute(novelPath, this.site);
-    if (!novelUrl) throw new Error('Invalid novel URL');
+    const url = makeAbsolute(novelPath, this.site) || '';
+    const proxyUrl =
+      'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+    console.log(proxyUrl);
 
-    const result = await fetchApi(novelUrl);
-    if (!result.ok) throw new Error('Failed to fetch novel');
+    let data = '';
 
-    const $ = parseHTML(await result.text());
+    try {
+      const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      data = await response.text(); // Use .json() if expecting JSON
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching URL:' + proxyUrl, error);
+    }
+
+    const loadedCheerio = parseHTML(data);
 
     // === Novel cover ===
     const novelCover =
-      makeAbsolute($('img.object-cover').attr('src')?.trim(), this.site) ||
-      defaultCover;
+      makeAbsolute(
+        loadedCheerio('img.object-cover').attr('src')?.trim(),
+        this.site,
+      ) || defaultCover;
 
     // === Novel name ===
-    const novelName = $('main div div div div div div h1')
-      .first()
-      .text()
-      .trim();
-    /*
+    const novelName = loadedCheerio('h1').text().trim() || 'No title';
+
     // === Genre ===
-    let genre = $('main div div div div div div div p.text-base a')
+    let genre = loadedCheerio('div > p.text-base')
       .first()
+      .find('a')
       .text()
       .trim();
     genre = genre || '';
@@ -109,73 +133,93 @@ class XinShu69 implements Plugin.PluginBase {
     }
 
     // === Status ===
-    let statusText = $('main div div div div div div div p.text-base')
-      .filter((_i, el) => {
-        const txt = $(el).text();
-        return txt.includes('连载中') || txt.includes('完本');
-      })
-      .text()
-      .trim();
-
+    const thirdParagraph = loadedCheerio('div > p').eq(2).text().trim();
+    console.log(thirdParagraph); // "Third paragraph"
     let status = '';
-    if (statusText.includes('连载中')) status = NovelStatus.Ongoing;
-    else if (statusText.includes('完本')) status = NovelStatus.Completed;
+    if (thirdParagraph.includes('连载中')) status = NovelStatus.Ongoing;
+    else if (thirdParagraph.includes('完本')) status = NovelStatus.Completed;
     else status = NovelStatus.Unknown;
 
-    // === Get chapter list link ===
-    const chapterListPath = $('div#load-more-container a').attr('href')?.trim();
-    const chapterListUrl = chapterListPath
-      ? makeAbsolute(chapterListPath, this.site)
-      : undefined;
+    let summary = '';
+    let novelAuthor = '';
+    let rating = 0.0;
 
-    // === Fetch chapters ===
-    const chapters: Plugin.ChapterItem[] = [];
-    if (chapterListUrl) {
-      const chapterRes = await fetchApi(chapterListUrl);
-      if (chapterRes.ok) {
-        const $$ = parseHTML(await chapterRes.text());
+    if (novelName === 'No title') {
+      throw new Error('Failed to parse novel details');
+    } else {
+      const apiUrl = `${this.site}api/search`;
 
-        $$('#chapter-list-grid a').each((_i, el) => {
-          const $el = $$(el);
-          const chapterPath = $el.attr('href')?.trim();
-          const chapterName = $el.text().trim();
+      const result = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          Referer: `${this.site}search.html?q=${encodeURIComponent(novelName)}`,
+        },
+        body: `q=${encodeURIComponent(novelName)}`,
+      });
 
-          if (chapterPath && chapterName) {
-            chapters.push({
-              name: chapterName,
-              path: chapterPath,
-              releaseTime: undefined,
-            });
-          }
-        });
+      if (result.ok) {
+        const data = await result.json();
+        if (data.code === 200 && Array.isArray(data.results)) {
+          const firstItem = data.results[0];
+          novelAuthor = firstItem.author?.trim() || '';
+          summary = firstItem.description?.trim() || '';
+          rating = firstItem.score ? parseFloat(firstItem.score) : 0.0;
+        }
       }
     }
-*/
-    // === Summary (optional: none described) ===
-    /*    let summary: string | undefined;
-    let summary_translate: string | undefined;
-    if (summary) {
-      summary_translate = await translate(summary, 'ru');
-      summary_translate = summary_translate.replace(/<[^>]+>/g, '');
-    }*/
+    //Chapters
 
-    // === Assemble novel object ===
-    const novel: Plugin.SourceNovel = {
+    // === Get chapter list link ===
+    const chapterListPath = getSlug(novelPath);
+    const chapterListUrl = chapterListPath
+      ? 'https://www.69yue.top/api/articleitems/' + chapterListPath + '.json'
+      : undefined;
+
+    console.log('Chapter List URL:', chapterListUrl);
+
+    // Table of Content is on a different page than the summary page
+    let chapters: Plugin.ChapterItem[] = [];
+
+    if (!chapterListUrl) {
+      throw new Error('Could not determine chapter list URL');
+    } else {
+      const result = await fetch(chapterListUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          Referer: url,
+        },
+      });
+
+      if (result.ok) {
+        const data = await result.json();
+        if (data.code === 200 && Array.isArray(data.items)) {
+          chapters = data.items.map((item: any) => ({
+            name: item.cn?.trim() || 'Unknown',
+            path: item.cid ? this.site + 'article/' + item.cid + '.html' : '',
+          }));
+        }
+      }
+    }
+
+    let novel: Plugin.SourceNovel = {
       path: novelPath,
       name: novelName,
       cover: novelCover,
-      summary: '',
-      author: '', //undefined,
-      genres: '', //genre,
-      status: '',
-      chapters: [],
+      summary: summary || 'No description',
+      author: novelAuthor,
+      genres: genre,
+      status: status,
+      rating: rating / 2, // Convert 10-point scale to 5-point scale
+      chapters: chapters,
     };
 
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const chapterUrl = makeAbsolute(chapterPath, this.site);
+    const chapterUrl = chapterPath;
     if (!chapterUrl) throw new Error('Invalid chapter URL');
 
     const result = await fetchApi(chapterUrl);
