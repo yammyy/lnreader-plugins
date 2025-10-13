@@ -14,6 +14,7 @@
     "host-dev": "npx tsc --project tsconfig.production.json && node --env-file=.env ./scripts/json_plugins.js && serve",
     "icons": "npm run clearMultisrc && npm run generate && npx tsc --project tsconfig.production.json && npm run json && node ./scripts/icon_reloading.js",
     "json": "node ./scripts/json_plugins.js",
+	"updateGT": "node ./scripts/updateGoogleTranslate.js",
     "lint": "npx eslint .",
     "prepare": "husky",
     "prettier": "prettier --write \"./**/*.{js,ts}\"",
