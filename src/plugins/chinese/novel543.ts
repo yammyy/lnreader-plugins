@@ -382,7 +382,18 @@ const makeAbsolute = (
     ) {
       return relativeUrl;
     }
-    return new URL(relativeUrl, baseUrl).href;
+    // Remove trailing slash from baseUrl if present
+    const normalizedBase = baseUrl.endsWith('/')
+      ? baseUrl.slice(0, -1)
+      : baseUrl;
+
+    // Remove leading slash from relativeUrl if present
+    const normalizedRelative = relativeUrl.startsWith('/')
+      ? relativeUrl.slice(1)
+      : relativeUrl;
+
+    //    return `${normalizedBase}/${normalizedRelative}`;
+    return new URL(normalizedRelative, normalizedBase).href;
   } catch {
     return undefined;
   }

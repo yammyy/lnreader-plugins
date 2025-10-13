@@ -22,7 +22,7 @@
 		"name": "69书吧",
 		"site": "https://www.69yue.top/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "5.1.2",
+		"version": "9.1.2",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/69xinshu.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/69xinshu/icon.png"
 	},

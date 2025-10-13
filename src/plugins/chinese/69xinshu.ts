@@ -9,7 +9,7 @@ class XinShu69 implements Plugin.PluginBase {
   name = '69书吧';
   icon = 'src/cn/69xinshu/icon.png';
   site = 'https://www.69yue.top/';
-  version = '5.1.2';
+  version = '9.1.2';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     const apiUrl = `${this.site}api/list/0/0/1/${pageNo}.json`;
@@ -24,7 +24,7 @@ class XinShu69 implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = json.data.map((item: any) => ({
       name: item.title.trim(),
-      path: item.infourl.trim(),
+      path: makeAbsolute(item.infourl.trim(), this.site) || '',
       cover: item.coverUrl?.trim()
         ? item.coverUrl.startsWith('/')
           ? this.site + item.coverUrl.replace(/^\//, '')
@@ -51,16 +51,15 @@ class XinShu69 implements Plugin.PluginBase {
 
     // === Novel cover ===
     const novelCover =
-      $('main div div div div div div div img.object-cover')
-        .attr('src')
-        ?.trim() || defaultCover;
+      makeAbsolute($('img.object-cover').attr('src')?.trim(), this.site) ||
+      defaultCover;
 
     // === Novel name ===
     const novelName = $('main div div div div div div h1')
       .first()
       .text()
       .trim();
-
+    /*
     // === Genre ===
     let genre = $('main div div div div div div div p.text-base a')
       .first()
@@ -151,7 +150,7 @@ class XinShu69 implements Plugin.PluginBase {
         });
       }
     }
-
+*/
     // === Summary (optional: none described) ===
     /*    let summary: string | undefined;
     let summary_translate: string | undefined;
@@ -165,11 +164,11 @@ class XinShu69 implements Plugin.PluginBase {
       path: novelPath,
       name: novelName,
       cover: novelCover,
-      summary: undefined,
-      author: undefined,
-      genres: genre,
-      status,
-      chapters,
+      summary: '',
+      author: '', //undefined,
+      genres: '', //genre,
+      status: '',
+      chapters: [],
     };
 
     return novel;
@@ -230,7 +229,7 @@ class XinShu69 implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = data.results.map((item: any) => ({
       name: item.title?.trim() || 'Unknown',
-      path: item.infourl?.trim() || '',
+      path: makeAbsolute(item.infourl.trim(), this.site) || '',
       cover: defaultCover,
     }));
 
@@ -258,7 +257,18 @@ const makeAbsolute = (
     ) {
       return relativeUrl;
     }
-    return new URL(relativeUrl, baseUrl).href;
+    // Remove trailing slash from baseUrl if present
+    const normalizedBase = baseUrl.endsWith('/')
+      ? baseUrl.slice(0, -1)
+      : baseUrl;
+
+    // Remove leading slash from relativeUrl if present
+    const normalizedRelative = relativeUrl.startsWith('/')
+      ? relativeUrl.slice(1)
+      : relativeUrl;
+
+    //    return `${normalizedBase}/${normalizedRelative}`;
+    return new URL(normalizedRelative, normalizedBase).href;
   } catch {
     return undefined;
   }
