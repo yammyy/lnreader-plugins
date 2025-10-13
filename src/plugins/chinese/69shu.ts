@@ -22,7 +22,7 @@ class Shu69 implements Plugin.PluginBase {
   name = '69书吧';
   icon = 'src/cn/69shu/icon.png';
   site = 'https://www.69shu.xyz';
-  version = '2.2.2';
+  version = '3.2.2';
 
   async popularNovels(
     pageNo: number,
