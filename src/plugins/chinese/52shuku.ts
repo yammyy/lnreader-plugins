@@ -8,7 +8,7 @@ class shuku52Plugin implements Plugin.PluginBase {
   id = '52shuku';
   name = '52书库';
   site = 'https://www.52shuku.net/';
-  version = '4.4.5';
+  version = '7.4.5';
   icon = 'src/cn/52shuku/faviconV2.png';
 
   imageRequestInit = {
@@ -139,13 +139,13 @@ class shuku52Plugin implements Plugin.PluginBase {
     const $ = parseHTML(await result.text());
 
     // === Target the main content container ===
-    const $content = $('article.article-content div');
+    const $content = $('article.article-content');
     if (!$content.length) return 'Error: Could not find chapter content';
 
     // === Remove junk elements ===
     $content
       .find(
-        'script, style, iframe, button, hr, div, [class*="ads"], [id*="ads"], [class*="recommend"]',
+        'script, style, iframe, button, hr, [class*="ads"], [id*="ads"], [class*="recommend"], [class*="pagination2"]',
       )
       .remove();
 
@@ -170,10 +170,40 @@ class shuku52Plugin implements Plugin.PluginBase {
         return this.type === 'comment';
       })
       .remove();
+    // === Get valid content ===
+    const $validDivsOrPs = $content.children().filter((i, el) => {
+      const $el = $(el);
 
-    // === Convert remaining HTML to plain text ===
+      // keep <p> elements directly
+      if (el.tagName === 'p') return true;
 
-    let rawHtml = $content.html() || '';
+      // keep <div> if it's not junk
+      if (el.tagName === 'div') {
+        const $paragraphs = $el.children('p');
+        if ($paragraphs.length === 1 && /52shuku/i.test($paragraphs.text()))
+          return false;
+        return true;
+      }
+
+      // ignore other tags
+      return false;
+    });
+
+    // Get all <p> inside the selected nodes
+    const resultHtml = $validDivsOrPs
+      .map((i, el) =>
+        $(el).find('p').length
+          ? $(el)
+              .find('p')
+              .map((j, p) => $(p).html())
+              .get()
+          : $(el).html(),
+      )
+      .get()
+      .join('\n');
+
+    // === Get cleaned HTML ===
+    let rawHtml = resultHtml;
     if (!rawHtml) return 'Error: Chapter content was empty';
     let chapterText = '';
 
