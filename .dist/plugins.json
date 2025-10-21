@@ -63,6 +63,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/novel543/icon.png"
 	},
 	{
+		"id": "dragonholic",
+		"name": "Dragonholic",
+		"site": "https://dragonholic.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/Dragonholic[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/dragonholic/icon.png"
+	},
+	{
 		"id": "novelupdates",
 		"name": "Novel Updates",
 		"site": "https://www.novelupdates.com/",
