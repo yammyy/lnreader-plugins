@@ -22,7 +22,7 @@ class mde2a08aPlugin implements Plugin.PluginBase {
   name = '笔趣阁';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://m.bqgde.de/';
-  version = '14.2.4';
+  version = '15.2.4';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -307,10 +307,14 @@ class mde2a08aPlugin implements Plugin.PluginBase {
 
     // Handle case when response is "1" (no results)
     if (text.trim() === '1') throw new Error('No results');
+    console.log('Search response text:', text);
 
-    let data: any[];
+    let data: any;
     try {
-      data = JSON.parse(text); // parse JSON-as-HTML
+      data = JSON.parse(text);
+      if (typeof data === 'string') {
+        data = JSON.parse(data);
+      }
     } catch (err) {
       console.error('Failed to parse search results:', err);
       return [];

@@ -29,9 +29,9 @@
 	{
 		"id": "bikuge",
 		"name": "笔趣阁 (ab9a1c1018b5.5df7ec.cfd)",
-		"site": "https://ab9a1c1018b5.5df7ec.cfd/",
+		"site": "https://1da5dab587768.5df7ec.cfd/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "15.2.4",
+		"version": "20.2.4",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/ab9a1c1018b5.5df7ec.cdf.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/mde2a0a8/icon.png"
 	},
@@ -40,7 +40,7 @@
 		"name": "笔趣阁",
 		"site": "https://m.bqgde.de/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "14.2.4",
+		"version": "15.2.4",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/m.de2a08a.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/mde2a0a8/icon.png"
 	},
