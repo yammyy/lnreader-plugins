@@ -444,23 +444,30 @@ async function translateHtmlByLinePlain(html: string, targetLang: string) {
   const regex = new RegExp(`(${lineBreakTags.join('|')})`, 'gi');
   const parts = html.split(regex).filter(Boolean);
 
-  for (let i = 0; i < parts.length; i += 2) {
-    const text = (parts[i] || '').replace(/<[^>]+>/g, '').trim();
-    const tag = (parts[i + 1] || '').toLowerCase();
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (lineBreakTags.includes(part.toLowerCase())) {
+      // just a tag, skip or mark break
+      continue;
+    }
+    const next =
+      parts[i + 1] && lineBreakTags.includes(parts[i + 1].toLowerCase())
+        ? parts[i + 1].toLowerCase()
+        : '';
 
-    if (!text && !tag) continue;
+    const text = part.replace(/<[^>]+>/g, '').trim();
+    if (!text) continue;
 
-    if (tag === '</li>') {
-      if (text) lines.push({ tag: 'LI', text, parentTag: 'UL' });
-    } else if (tag.startsWith('</h')) {
-      if (text)
-        lines.push({ tag: tag.replace(/[<>]/g, '').toUpperCase(), text }); // H1-H4
+    if (next === '</li>') {
+      lines.push({ tag: 'LI', text, parentTag: 'UL' });
+    } else if (next.startsWith('</h')) {
+      lines.push({ tag: next.replace(/[<>]/g, '').toUpperCase(), text });
       lines.push({ tag: 'BR', text: '' });
-    } else if (tag === '</p>') {
-      if (text) lines.push({ tag: 'P', text });
-    } else if (tag === '<br>') {
-      if (text) lines.push({ tag: 'P', text });
-    } else if (text) {
+    } else if (next === '</p>') {
+      lines.push({ tag: 'P', text });
+    } else if (next === '<br>') {
+      lines.push({ tag: 'P', text });
+    } else {
       lines.push({ tag: 'P', text });
     }
   }

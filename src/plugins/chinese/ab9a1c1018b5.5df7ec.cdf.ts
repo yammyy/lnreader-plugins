@@ -13,7 +13,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
       'Accept-Language':
         'ru,en-US;q=0.9,en;q=0.8,zh-TW;q=0.7,zh-CN;q=0.6,zh;q=0.5',
-      'Referer': 'https://1da5dab587768.5df7ec.cfd/', // Referer
+      'Referer': 'https://59d56cafbe1a35.5df7ec.cfd/', // Referer
       'DNT': '1', // Do Not Track
       'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
     },
@@ -22,8 +22,8 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   id = 'bikuge';
   name = '笔趣阁 (ab9a1c1018b5.5df7ec.cfd)';
   icon = 'src/cn/mde2a0a8/icon.png';
-  site = 'https://1da5dab587768.5df7ec.cfd/';
-  version = '20.2.4';
+  site = 'https://59d56cafbe1a35.5df7ec.cfd/';
+  version = '25.2.4';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -231,10 +231,10 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
 
       // get cleaned HTML and strip known junk strings
       let chapterHtml = $content.html()?.trim() ?? '';
+      console.log(chapterHtml);
       if (chapterHtml) {
         chapterHtml = chapterHtml
-          .replace(/69书吧/g, '')
-          .replace(/请收藏：https?:\/\/m\.57ae58c447\.cfd/gi, '')
+          .replace(/请收藏：https?:\/\//gi, '')
           .replace(/内容未完，下一页继续阅读好紧/gi, '');
         parts.push(chapterHtml);
       }
@@ -272,6 +272,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
     }
 
     const fullHtml = parts.join('<br>');
+    console.log('Full chapter HTML before translation:', fullHtml);
 
     let chapterText = await translateHtmlByLinePlain(fullHtml, 'ru');
 
@@ -467,23 +468,30 @@ async function translateHtmlByLinePlain(html: string, targetLang: string) {
   const regex = new RegExp(`(${lineBreakTags.join('|')})`, 'gi');
   const parts = html.split(regex).filter(Boolean);
 
-  for (let i = 0; i < parts.length; i += 2) {
-    const text = (parts[i] || '').replace(/<[^>]+>/g, '').trim();
-    const tag = (parts[i + 1] || '').toLowerCase();
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (lineBreakTags.includes(part.toLowerCase())) {
+      // just a tag, skip or mark break
+      continue;
+    }
+    const next =
+      parts[i + 1] && lineBreakTags.includes(parts[i + 1].toLowerCase())
+        ? parts[i + 1].toLowerCase()
+        : '';
 
-    if (!text && !tag) continue;
+    const text = part.replace(/<[^>]+>/g, '').trim();
+    if (!text) continue;
 
-    if (tag === '</li>') {
-      if (text) lines.push({ tag: 'LI', text, parentTag: 'UL' });
-    } else if (tag.startsWith('</h')) {
-      if (text)
-        lines.push({ tag: tag.replace(/[<>]/g, '').toUpperCase(), text }); // H1-H4
+    if (next === '</li>') {
+      lines.push({ tag: 'LI', text, parentTag: 'UL' });
+    } else if (next.startsWith('</h')) {
+      lines.push({ tag: next.replace(/[<>]/g, '').toUpperCase(), text });
       lines.push({ tag: 'BR', text: '' });
-    } else if (tag === '</p>') {
-      if (text) lines.push({ tag: 'P', text });
-    } else if (tag === '<br>') {
-      if (text) lines.push({ tag: 'P', text });
-    } else if (text) {
+    } else if (next === '</p>') {
+      lines.push({ tag: 'P', text });
+    } else if (next === '<br>') {
+      lines.push({ tag: 'P', text });
+    } else {
       lines.push({ tag: 'P', text });
     }
   }
