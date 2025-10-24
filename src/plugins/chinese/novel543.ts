@@ -8,7 +8,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '14.0.2';
+  version = '15.0.2';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -314,6 +314,8 @@ class Novel543Plugin implements Plugin.PluginBase {
         /_\d+\.html$|\.html$/i,
         '',
       );
+      console.log('Next base path:', nextBasePath);
+      console.log('Base path:', initialBasePath);
 
       if (nextBasePath !== initialBasePath) break;
 
