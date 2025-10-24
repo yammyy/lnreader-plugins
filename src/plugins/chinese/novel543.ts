@@ -8,7 +8,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '7.0.2';
+  version = '10.0.2';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -188,14 +188,6 @@ class Novel543Plugin implements Plugin.PluginBase {
           path: chapterUrl,
           chapterNumber: index + 1,
         });
-
-        // дополнительная страница (вторая часть)
-        const altUrl = chapterUrl.replace(/\.html$/, '_2.html');
-        chapters.push({
-          name: chapterName + ' (part 2)', // можно добавить пометку
-          path: altUrl,
-          chapterNumber: index + 1.5, // или index + 1, если не хочешь дробные
-        });
       }
     });
 
@@ -215,63 +207,122 @@ class Novel543Plugin implements Plugin.PluginBase {
     const chapterUrl = makeAbsolute(chapterPath, this.site);
     if (!chapterUrl) throw new Error('Invalid chapter URL');
 
-    const result = await fetchApi(chapterUrl);
-    if (!result.ok) throw new Error('Failed to fetch chapter');
+    // 2️⃣ Compute base path for detecting multi-part chapters
+    const initialBasePath = new URL(chapterUrl).pathname.replace(
+      /_\d+\.html$|\.html$/i,
+      '',
+    );
 
-    const $ = parseHTML(await result.text());
-    const chapterTitle = $('h1').text().trim();
-    const $content = $('div.content.py-5');
-    if (!$content.length) return 'Error: Could not find chapter content';
+    let currentUrl = chapterUrl;
 
-    $content
-      .find(
-        'script, style, ins, iframe, [class*="ads"], [id*="ads"], [class*="google"], [id*="google"], [class*="recommend"], div[align="center"], p:contains("推薦本書"), a[href*="javascript:"]',
-      )
-      .remove();
+    const parts: string[] = [];
+    let chapterTitle = '';
+    let safetyCounter = 0;
+    const MAX_PAGES = 50; // prevent infinite loops
 
-    $content.find('p').each((_i, el) => {
-      const $p = $(el);
-      const pText = $p.text().trim();
-      if (
-        pText.includes('請記住本站域名') ||
-        pText.includes('手機版閱讀網址') ||
-        pText.includes('novel543') ||
-        pText.includes('稷下書院') ||
-        pText.includes('最快更新') ||
-        pText.includes('最新章節') ||
-        pText.includes('章節報錯') ||
-        pText.match(/app|APP|下載|客户端|关注微信|公众号/i) ||
-        pText.length === 0 ||
-        ($p
-          .html()
-          ?.replace(/&nbsp;/g, '')
-          .trim() === '' &&
-          $p.find('img').length === 0) ||
-        pText.includes('溫馨提示')
-      ) {
-        $p.remove();
+    while (currentUrl && safetyCounter < MAX_PAGES) {
+      safetyCounter++;
+
+      // --- Fetch and parse ---
+      const result = await fetchApi(currentUrl);
+      if (!result.ok) throw new Error(`Failed to fetch: ${currentUrl}`);
+      const html = await result.text();
+      const $ = parseHTML(html);
+
+      // --- Extract title (only on first page) ---
+      if (!chapterTitle) {
+        const titleEl = $('h1').first();
+        chapterTitle = titleEl.text().trim();
       }
-    });
 
-    $content
-      .contents()
-      .filter(function () {
-        return this.type === 'comment';
-      })
-      .remove();
+      // --- Extract and clean content ---
+      const $content = $('div.content.py-5');
+      if (!$content.length) {
+        console.warn('No content found in', currentUrl);
+        break;
+      }
 
-    let rawHtml = $content.html() || '';
-    if (!rawHtml) return 'Error: Chapter content was empty';
-    rawHtml = '<h1>' + chapterTitle + '</h1> 🐼<br>' + rawHtml;
-    let chapterText = '';
+      $content
+        .find(
+          'script, style, ins, iframe, [class*="ads"], [id*="ads"], [class*="google"], [id*="google"], [class*="recommend"], div[align="center"], p:contains("推薦本書"), a[href*="javascript:"]',
+        )
+        .remove();
 
-    if (rawHtml.trim()) {
-      chapterText = await translateHtmlByLinePlain(rawHtml, 'ru');
-    } else {
-      chapterText = ''; // or keep as is, no translation
+      $content.find('p').each((_i, el) => {
+        const $p = $(el);
+        const pText = $p.text().trim();
+        if (
+          pText.includes('請記住本站域名') ||
+          pText.includes('手機版閱讀網址') ||
+          pText.includes('novel543') ||
+          pText.includes('稷下書院') ||
+          pText.includes('最快更新') ||
+          pText.includes('最新章節') ||
+          pText.includes('章節報錯') ||
+          pText.match(/app|APP|下載|客户端|关注微信|公众号/i) ||
+          pText.length === 0 ||
+          ($p
+            .html()
+            ?.replace(/&nbsp;/g, '')
+            .trim() === '' &&
+            $p.find('img').length === 0) ||
+          pText.includes('溫馨提示')
+        ) {
+          $p.remove();
+        }
+      });
+
+      $content
+        .contents()
+        .filter(function () {
+          return this.type === 'comment';
+        })
+        .remove();
+
+      // get clean HTML for this part
+      const chapterHtml = $content.html()?.trim() || '';
+
+      // --- Translate content ---
+      const translatedBody = await translateHtmlByLinePlain(chapterHtml, 'ru');
+
+      if (translatedBody) parts.push(translatedBody);
+
+      // --- Find link to next part of the same chapter ---
+      const nextLink = $('a:contains("下一章")').attr('href');
+      if (!nextLink) break;
+
+      // skip invalid links
+      if (nextLink.startsWith('#') || /^javascript:/i.test(nextLink)) break;
+
+      const nextUrl = new URL(nextLink, currentUrl).toString();
+
+      // Avoid infinite loops
+      if (nextUrl === currentUrl) break;
+
+      // Compare base path to detect same chapter continuation
+      const nextBasePath = new URL(nextUrl).pathname.replace(
+        /_\d+\.html$|\.html$/i,
+        '',
+      );
+
+      if (nextBasePath !== initialBasePath) break;
+
+      // continue to next part
+      currentUrl = nextUrl;
     }
 
-    return chapterText.trim();
+    if (safetyCounter >= MAX_PAGES) {
+      console.warn(
+        'parseChapter: reached MAX_PAGES while loading chapter parts',
+      );
+    }
+
+    // --- Combine all parts ---
+    const fullHtml = parts.join('<br>');
+    if (!fullHtml.trim()) return 'Error: Chapter content was empty';
+
+    // --- Return with original title (not translated) ---
+    return '<h1>' + chapterTitle + '</h1> 🐼<br>' + fullHtml.trim();
   }
 
   async searchNovels(
