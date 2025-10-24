@@ -8,7 +8,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '13.0.2';
+  version = '16.0.2';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -209,7 +209,7 @@ class Novel543Plugin implements Plugin.PluginBase {
 
     // 2️⃣ Compute base path for detecting multi-part chapters
     const initialBasePath = new URL(chapterUrl).pathname.replace(
-      /_\d+\.html$|\.html$/i,
+      /\.html$/i,
       '',
     );
 
@@ -224,6 +224,7 @@ class Novel543Plugin implements Plugin.PluginBase {
       safetyCounter++;
 
       // --- Fetch and parse ---
+      console.log('Current chapter part URL:', currentUrl);
       const result = await fetchApi(currentUrl);
       if (!result.ok) throw new Error(`Failed to fetch: ${currentUrl}`);
       const html = await result.text();
@@ -281,6 +282,8 @@ class Novel543Plugin implements Plugin.PluginBase {
 
       // get clean HTML for this part
       const chapterHtml = $content.html()?.trim() || '';
+      console.log('=== Content ===');
+      console.log(chapterHtml.slice(0, 200));
 
       // --- Translate content ---
       const translatedBody = await translateHtmlByLinePlain(
@@ -288,6 +291,8 @@ class Novel543Plugin implements Plugin.PluginBase {
         'ru',
         'zh-TW',
       );
+      console.log('=== Translate ===');
+      console.log(translatedBody.slice(0, 200));
 
       if (translatedBody) parts.push(translatedBody);
 
@@ -298,16 +303,19 @@ class Novel543Plugin implements Plugin.PluginBase {
       // skip invalid links
       if (nextLink.startsWith('#') || /^javascript:/i.test(nextLink)) break;
 
-      const nextUrl = new URL(nextLink, currentUrl).toString();
+      const nextUrl = makeAbsolute(nextLink, this.site) || '';
+      console.log('Next part URL:', nextUrl);
 
       // Avoid infinite loops
       if (nextUrl === currentUrl) break;
 
       // Compare base path to detect same chapter continuation
       const nextBasePath = new URL(nextUrl).pathname.replace(
-        /_\d+\.html$|\.html$/i,
+        /(?:_\d+)?\.html$/i,
         '',
       );
+      console.log('Next base path:', nextBasePath);
+      console.log('Base path:', initialBasePath);
 
       if (nextBasePath !== initialBasePath) break;
 

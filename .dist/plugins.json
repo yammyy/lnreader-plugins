@@ -67,7 +67,7 @@
 		"name": "Novel543",
 		"site": "https://www.novel543.com/",
 		"lang": "中文, 汉语, 漢語",
-		"version": "13.0.2",
+		"version": "16.0.2",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/novel543.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/novel543/icon.png"
 	},
