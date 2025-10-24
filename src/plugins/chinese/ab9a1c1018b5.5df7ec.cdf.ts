@@ -23,7 +23,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   name = '笔趣阁 (ab9a1c1018b5.5df7ec.cfd)';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://87bd21b0b1f922b7160.5df7ec.cfd/';
-  version = '26.2.4';
+  version = '27.2.4';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
@@ -446,7 +446,11 @@ export async function translate(text: string, lang: string): Promise<string> {
   return translations.map(p => `<p>${p}</p>`).join('\n');
 }
 
-async function translateHtmlByLinePlain(html: string, targetLang: string) {
+async function translateHtmlByLinePlain(
+  html: string,
+  targetLang: string,
+  sourceLang: string = 'auto', // 👈 по умолчанию auto
+) {
   // 1️⃣ Normalize tags: remove all attributes
   html = html.replace(/<(\w+)[^>]*>/g, '<$1>');
 
@@ -503,9 +507,12 @@ async function translateHtmlByLinePlain(html: string, targetLang: string) {
     .map(n => (n.tag === 'BR' ? '' : n.text))
     .join(SEPARATOR);
 
-  // 4️⃣ Translate plain text
-  let translatedText = await translateAutoHotkeyStyle(plainText, targetLang);
-  // Remove the outer brackets and the second array
+  // 4️⃣ Translate plain text (используем sourceLang)
+  let translatedText = await translateAutoHotkeyStyle(
+    plainText,
+    targetLang,
+    sourceLang,
+  ); // Remove the outer brackets and the second array
   translatedText = translatedText
     .replace(/^\[\[\"/, '') // remove opening [["
     .replace(/\"\],\s*\[\".*\"\]\]$/, ''); // remove ",["ln"]]
@@ -538,12 +545,13 @@ async function translateHtmlByLinePlain(html: string, targetLang: string) {
 export async function translateAutoHotkeyStyle(
   text: string,
   lang: string,
+  sourceLang: string = 'auto', // 👈 тоже по умолчанию auto
 ): Promise<string> {
   const userAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36';
 
   // === 1️⃣ POST to translateHtml (same as AHK, but response ignored) ===
-  const postPayload = JSON.stringify([[[text], 'auto', lang], 'wt_lib']);
+  const postPayload = JSON.stringify([[[text], sourceLang, lang], 'te_lib']);
 
   let htext = '';
   // === 2️⃣ Fetch with error handling ===
