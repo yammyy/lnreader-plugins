@@ -8,7 +8,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '13.0.2';
+  version = '14.0.2';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -224,6 +224,7 @@ class Novel543Plugin implements Plugin.PluginBase {
       safetyCounter++;
 
       // --- Fetch and parse ---
+      console.log('Current chapter part URL:', currentUrl);
       const result = await fetchApi(currentUrl);
       if (!result.ok) throw new Error(`Failed to fetch: ${currentUrl}`);
       const html = await result.text();
@@ -281,6 +282,8 @@ class Novel543Plugin implements Plugin.PluginBase {
 
       // get clean HTML for this part
       const chapterHtml = $content.html()?.trim() || '';
+      console.log('=== Content ===');
+      console.log(chapterHtml.slice(0, 200));
 
       // --- Translate content ---
       const translatedBody = await translateHtmlByLinePlain(
@@ -288,6 +291,8 @@ class Novel543Plugin implements Plugin.PluginBase {
         'ru',
         'zh-TW',
       );
+      console.log('=== Translate ===');
+      console.log(translatedBody.slice(0, 200));
 
       if (translatedBody) parts.push(translatedBody);
 
@@ -298,7 +303,8 @@ class Novel543Plugin implements Plugin.PluginBase {
       // skip invalid links
       if (nextLink.startsWith('#') || /^javascript:/i.test(nextLink)) break;
 
-      const nextUrl = new URL(nextLink, currentUrl).toString();
+      const nextUrl = makeAbsolute(nextLink, this.site) || '';
+      console.log('Next part URL:', nextUrl);
 
       // Avoid infinite loops
       if (nextUrl === currentUrl) break;
