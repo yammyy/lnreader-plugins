@@ -8,7 +8,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '15.0.2';
+  version = '16.0.2';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -209,7 +209,7 @@ class Novel543Plugin implements Plugin.PluginBase {
 
     // 2️⃣ Compute base path for detecting multi-part chapters
     const initialBasePath = new URL(chapterUrl).pathname.replace(
-      /_\d+\.html$|\.html$/i,
+      /\.html$/i,
       '',
     );
 
@@ -311,7 +311,7 @@ class Novel543Plugin implements Plugin.PluginBase {
 
       // Compare base path to detect same chapter continuation
       const nextBasePath = new URL(nextUrl).pathname.replace(
-        /_\d+\.html$|\.html$/i,
+        /(?:_\d+)?\.html$/i,
         '',
       );
       console.log('Next base path:', nextBasePath);
