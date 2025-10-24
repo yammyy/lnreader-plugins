@@ -8,7 +8,7 @@ class shuku52Plugin implements Plugin.PluginBase {
   id = '52shuku';
   name = '52书库';
   site = 'https://www.52shuku.net/';
-  version = '7.4.5';
+  version = '8.4.5';
   icon = 'src/cn/52shuku/faviconV2.png';
 
   imageRequestInit = {
@@ -212,6 +212,8 @@ class shuku52Plugin implements Plugin.PluginBase {
     } else {
       chapterText = ''; // or keep as is, no translation
     }
+
+    chapterText = chapterPath + '🐼<br>' + chapterText;
 
     return chapterText.trim();
   }

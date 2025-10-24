@@ -22,7 +22,7 @@ class Shu69 implements Plugin.PluginBase {
   name = '69书吧';
   icon = 'src/cn/69shu/icon.png';
   site = 'https://www.69shu.xyz';
-  version = '3.2.2';
+  version = '5.2.2';
 
   async popularNovels(
     pageNo: number,
@@ -203,8 +203,10 @@ class Shu69 implements Plugin.PluginBase {
 
     const loadedCheerio = parseHTML(body);
 
+    const chapterTitle = loadedCheerio('h1').text().trim();
+
     // Собираем все <p> из #chaptercontent
-    const rawHtml = loadedCheerio('#chaptercontent p')
+    let rawHtml = loadedCheerio('#chaptercontent p')
       .map((i, el) => {
         const text = loadedCheerio(el).text().trim();
         if (!text || text.includes('69书吧')) return ''; // фильтруем пустые строки и рекламу
@@ -214,6 +216,8 @@ class Shu69 implements Plugin.PluginBase {
       })
       .get()
       .join('');
+
+    rawHtml = `<h1>${chapterTitle}</h1>` + '🐼<br>' + rawHtml;
 
     let translatedChapterText = '';
     if (rawHtml.trim()) {

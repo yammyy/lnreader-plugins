@@ -8,7 +8,7 @@ class Novel543Plugin implements Plugin.PluginBase {
   id = 'novel543';
   name = 'Novel543';
   site = 'https://www.novel543.com/';
-  version = '5.0.2';
+  version = '7.0.2';
   icon = 'src/cn/novel543/icon.png';
 
   imageRequestInit = {
@@ -219,6 +219,7 @@ class Novel543Plugin implements Plugin.PluginBase {
     if (!result.ok) throw new Error('Failed to fetch chapter');
 
     const $ = parseHTML(await result.text());
+    const chapterTitle = $('h1').text().trim();
     const $content = $('div.content.py-5');
     if (!$content.length) return 'Error: Could not find chapter content';
 
@@ -261,7 +262,7 @@ class Novel543Plugin implements Plugin.PluginBase {
 
     let rawHtml = $content.html() || '';
     if (!rawHtml) return 'Error: Chapter content was empty';
-    rawHtml = '🐼<br>' + rawHtml;
+    rawHtml = '<h1>' + chapterTitle + '</h1> 🐼<br>' + rawHtml;
     let chapterText = '';
 
     if (rawHtml.trim()) {

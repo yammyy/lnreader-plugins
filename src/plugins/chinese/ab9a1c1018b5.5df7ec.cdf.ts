@@ -13,7 +13,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
       'Accept-Language':
         'ru,en-US;q=0.9,en;q=0.8,zh-TW;q=0.7,zh-CN;q=0.6,zh;q=0.5',
-      'Referer': 'https://59d56cafbe1a35.5df7ec.cfd/', // Referer
+      'Referer': 'https://87bd21b0b1f922b7160.5df7ec.cfd//', // Referer
       'DNT': '1', // Do Not Track
       'Upgrade-Insecure-Requests': '1', // Upgrade-Insecure-Requests
     },
@@ -22,8 +22,8 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   id = 'bikuge';
   name = '笔趣阁 (ab9a1c1018b5.5df7ec.cfd)';
   icon = 'src/cn/mde2a0a8/icon.png';
-  site = 'https://59d56cafbe1a35.5df7ec.cfd/';
-  version = '25.2.4';
+  site = 'https://87bd21b0b1f922b7160.5df7ec.cfd/';
+  version = '26.2.4';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
