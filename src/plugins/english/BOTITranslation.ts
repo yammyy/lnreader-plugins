@@ -12,7 +12,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '4.0.0';
+  version = '5.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -233,3 +233,36 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 }
 
 export default new BOTITranslationPlugin();
+
+//This is the copy of @libs/isAbsolutUrl/makeAbsolute.
+const makeAbsolute = (
+  relativeUrl: string | undefined,
+  baseUrl: string,
+): string | undefined => {
+  if (!relativeUrl) return undefined;
+  try {
+    if (relativeUrl.startsWith('//')) {
+      return new URL(baseUrl).protocol + relativeUrl;
+    }
+    if (
+      relativeUrl.startsWith('http://') ||
+      relativeUrl.startsWith('https://')
+    ) {
+      return relativeUrl;
+    }
+    // Remove trailing slash from baseUrl if present
+    const normalizedBase = baseUrl.endsWith('/')
+      ? baseUrl.slice(0, -1)
+      : baseUrl;
+
+    // Remove leading slash from relativeUrl if present
+    const normalizedRelative = relativeUrl.startsWith('/')
+      ? relativeUrl.slice(1)
+      : relativeUrl;
+
+    //    return `${normalizedBase}/${normalizedRelative}`;
+    return new URL(normalizedRelative, normalizedBase).href;
+  } catch {
+    return undefined;
+  }
+};
