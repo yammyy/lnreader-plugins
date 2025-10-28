@@ -11,8 +11,8 @@ const siteDomain = 'botitranslation.com';
 class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
-  site = 'https://api.mystorywave.com/story-wave-backend/api/';
-  version = '2.0.0';
+  site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
+  version = '3.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -78,7 +78,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     return list.map((book: any) => ({
       name: book.bookName,
-      path: makeAbsolute(`v1/content/books/${book.id}`, this.site) || '',
+      path: makeAbsolute(`content/books/${book.id}`, this.site) || '',
       cover: book.bookCoverUrl || defaultCover,
     }));
   }
@@ -137,7 +137,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      const chaptersUrl = `v1/content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
+      const chaptersUrl = `content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
       const chapterRes = await fetchApi(chaptersUrl, {
         headers: {
           lang: 'en_US',
@@ -166,7 +166,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
             name: locked
               ? `🔒 Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`
               : `Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`,
-            path: makeAbsolute(`v1/content/chapters/${c.id}`, this.site) || '',
+            path: makeAbsolute(`content/chapters/${c.id}`, this.site) || '',
             releaseTime: releaseTime || undefined,
           });
         }
@@ -210,7 +210,8 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}v1/content/books/search?keyWord=${encodeURIComponent(searchTerm)}&pageNumber=${pageNo}&pageSize=50`;
+    const url = `${this.site}content/books/search?keyWord=${encodeURIComponent(searchTerm)}&pageNumber=${pageNo}&pageSize=50`;
+    console.log('Searching novels from URL:', url);
     const res = await fetchApi(url, {
       headers: {
         lang: 'en_US',
@@ -222,7 +223,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = list.map((book: any) => ({
       name: book.bookName || 'Unknown',
-      path: makeAbsolute(`v1/content/books/${book.id}`, this.site) || '',
+      path: makeAbsolute(`content/books/${book.id}`, this.site) || '',
       cover: book.bookCoverUrl || defaultCover,
     }));
     return novels;
