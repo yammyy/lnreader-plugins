@@ -5,8 +5,8 @@
 		"site": "https://www.52shuku.net/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "9.4.5",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/52shuku.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/52shuku/faviconV2.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/52shuku.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/52shuku/faviconV2.png"
 	},
 	{
 		"id": "69shu",
@@ -14,8 +14,8 @@
 		"site": "https://www.69shu.xyz",
 		"lang": "中文, 汉语, 漢語",
 		"version": "5.2.2",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/69shu.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/69shu/icon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/69shu.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/69shu/icon.png"
 	},
 	{
 		"id": "69xinshu",
@@ -23,8 +23,8 @@
 		"site": "https://www.69yue.top/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "36.1.2",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/69xinshu.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/69xinshu/icon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/69xinshu.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/69xinshu/icon.png"
 	},
 	{
 		"id": "bikuge",
@@ -32,8 +32,8 @@
 		"site": "https://87bd21b0b1f922b7160.5df7ec.cfd/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "27.2.4",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/ab9a1c1018b5.5df7ec.cdf.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/mde2a0a8/icon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/ab9a1c1018b5.5df7ec.cdf.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/mde2a0a8/icon.png"
 	},
 	{
 		"id": "bokuge",
@@ -41,8 +41,8 @@
 		"site": "https://m.bqgde.de/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "16.2.4",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/m.de2a08a.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/mde2a0a8/icon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/m.de2a08a.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/mde2a0a8/icon.png"
 	},
 	{
 		"id": "drxsw",
@@ -50,8 +50,8 @@
 		"site": "https://www.drxsw.com/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "24.0.3",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/drxsw.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/drxsw/logo.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/drxsw.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/drxsw/logo.png"
 	},
 	{
 		"id": "ixdzs8",
@@ -59,8 +59,8 @@
 		"site": "https://ixdzs8.com/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "7.0.3",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/ixdzs8.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/ixdzs8/favicon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/ixdzs8.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/ixdzs8/favicon.png"
 	},
 	{
 		"id": "novel543",
@@ -68,17 +68,17 @@
 		"site": "https://www.novel543.com/",
 		"lang": "中文, 汉语, 漢語",
 		"version": "16.0.2",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/novel543.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/novel543/icon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/chinese/novel543.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/cn/novel543/icon.png"
 	},
 	{
 		"id": "BOTITranslation",
 		"name": "BOTITranslation",
 		"site": "https://api.mystorywave.com/story-wave-backend/api/",
 		"lang": "English",
-		"version": "1.0.0",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/BOTITranslation.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/BOTI/favicon.png"
+		"version": "2.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/english/BOTITranslation.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/en/BOTI/favicon.png"
 	},
 	{
 		"id": "dragonholic",
@@ -86,8 +86,8 @@
 		"site": "https://dragonholic.com/",
 		"lang": "English",
 		"version": "1.0.8",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/Dragonholic[madara].js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/dragonholic/icon.png"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/english/Dragonholic[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/multisrc/madara/dragonholic/icon.png"
 	},
 	{
 		"id": "novelupdates",
@@ -95,8 +95,8 @@
 		"site": "https://www.novelupdates.com/",
 		"lang": "English",
 		"version": "0.9.3",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/novelupdates.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/icon.png",
-		"customCSS": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/customCSS.css"
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/english/novelupdates.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/en/novelupdates/icon.png",
+		"customCSS": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/en/novelupdates/customCSS.css"
 	}
 ]

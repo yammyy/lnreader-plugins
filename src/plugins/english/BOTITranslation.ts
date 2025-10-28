@@ -12,7 +12,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/';
-  version = '1.0.0';
+  version = '2.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -62,12 +62,13 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const genreParam = filters.genres.value.length
       ? '&genre=' + filters.genres.value.join(',')
       : '&genre=1';
-    const url = `${this.site}api/v1/content/books/rank/readCounts?pageNumber=${pageNo}&pageSize=20${genreParam}`;
+    const url = `${this.site}content/books/rank/readCounts?pageNumber=${pageNo}&pageSize=20${genreParam}`;
+    console.log('Fetching popular novels from URL:', url);
 
     const res = await fetchApi(url, {
       headers: {
         lang: 'en_US',
-        'site-domain': 'botitranslation.com',
+        'site-domain': siteDomain,
       },
     });
     if (!res.ok) throw new Error('Failed to fetch popular novels');
@@ -77,7 +78,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     return list.map((book: any) => ({
       name: book.bookName,
-      path: makeAbsolute(`/api/v1/content/books/${book.id}`, this.site) || '',
+      path: makeAbsolute(`v1/content/books/${book.id}`, this.site) || '',
       cover: book.bookCoverUrl || defaultCover,
     }));
   }
@@ -89,7 +90,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const result = await fetchApi(novelUrl, {
       headers: {
         lang: 'en_US',
-        'site-domain': 'botitranslation.com',
+        'site-domain': siteDomain,
       },
     });
     if (!result.ok) throw new Error('Failed to fetch novel');
@@ -136,11 +137,11 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      const chaptersUrl = `https://api.mystorywave.com/story-wave-backend/api/v1/content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
+      const chaptersUrl = `v1/content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
       const chapterRes = await fetchApi(chaptersUrl, {
         headers: {
           lang: 'en_US',
-          'site-domain': 'botitranslation.com',
+          'site-domain': siteDomain,
         },
       });
       if (!chapterRes.ok) continue;
@@ -184,7 +185,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const result = await fetchApi(chapterUrl, {
       headers: {
         lang: 'en_US',
-        'site-domain': 'botitranslation.com',
+        'site-domain': siteDomain,
       },
     });
     if (!result.ok) throw new Error('Failed to fetch chapter');
@@ -209,11 +210,11 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}api/v1/content/books/search?keyWord=${encodeURIComponent(searchTerm)}&pageNumber=${pageNo}&pageSize=50`;
+    const url = `${this.site}v1/content/books/search?keyWord=${encodeURIComponent(searchTerm)}&pageNumber=${pageNo}&pageSize=50`;
     const res = await fetchApi(url, {
       headers: {
         lang: 'en_US',
-        'site-domain': 'botitranslation.com',
+        'site-domain': siteDomain,
       },
     });
     const json = await res.json();
@@ -221,7 +222,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = list.map((book: any) => ({
       name: book.bookName || 'Unknown',
-      path: makeAbsolute(`/api/v1/content/books/${book.id}`, this.site) || '',
+      path: makeAbsolute(`v1/content/books/${book.id}`, this.site) || '',
       cover: book.bookCoverUrl || defaultCover,
     }));
     return novels;
