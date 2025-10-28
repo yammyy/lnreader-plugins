@@ -12,7 +12,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '3.0.0';
+  version = '4.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -74,12 +74,12 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     if (!res.ok) throw new Error('Failed to fetch popular novels');
 
     const json = await res.json();
-    const list = json?.data?.records || [];
+    const list = json?.data?.list || [];
 
     return list.map((book: any) => ({
-      name: book.bookName,
+      name: book.title,
       path: makeAbsolute(`content/books/${book.id}`, this.site) || '',
-      cover: book.bookCoverUrl || defaultCover,
+      cover: book.coverImgUrl || defaultCover,
     }));
   }
 
@@ -210,8 +210,10 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}content/books/search?keyWord=${encodeURIComponent(searchTerm)}&pageNumber=${pageNo}&pageSize=50`;
+    const query = searchTerm.trim().replace(/\s+/g, '+');
+    const url = `${this.site}content/books/search?keyWord=${query}&pageNumber=${pageNo}&pageSize=50`;
     console.log('Searching novels from URL:', url);
+
     const res = await fetchApi(url, {
       headers: {
         lang: 'en_US',
