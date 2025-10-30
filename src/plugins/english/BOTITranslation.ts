@@ -24,7 +24,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '9.0.0';
+  version = '11.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -85,7 +85,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     return list.map((book: any) => ({
       name: book.title,
-      path: makeAbsolute(`content/books/${book.id}`, this.site) || '',
+      path: `${this.site}content/books/${book.id}` || '',
       cover: book.coverImgUrl || defaultCover,
     }));
   }
@@ -143,7 +143,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      const chaptersUrl = `content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
+      const chaptersUrl = `${this.site}content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
       const chapterRes = await fetchApi(chaptersUrl, {
         headers: defaultHeaders,
       });
@@ -169,7 +169,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
             name: locked
               ? `🔒 Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`
               : `Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`,
-            path: makeAbsolute(`content/chapters/${c.id}`, this.site) || '',
+            path: `${this.site}content/chapters/${c.id}` || '',
             releaseTime: releaseTime || undefined,
           });
         }
@@ -182,7 +182,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const chapterUrl = makeAbsolute(chapterPath, this.site);
+    const chapterUrl = chapterPath;
     if (!chapterUrl) throw new Error('Invalid chapter URL');
 
     const result = await fetchApi(chapterUrl, {
@@ -224,7 +224,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     const novels: Plugin.NovelItem[] = list.map((book: any) => ({
       name: book.title || 'Unknown',
-      path: makeAbsolute(`content/books/${book.id}`, this.site) || '',
+      path: `${this.site}content/books/${book.id}` || '',
       cover: book.coverImgUrl || defaultCover,
     }));
     return novels;
@@ -232,36 +232,3 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 }
 
 export default new BOTITranslationPlugin();
-
-//This is the copy of @libs/isAbsolutUrl/makeAbsolute.
-const makeAbsolute = (
-  relativeUrl: string | undefined,
-  baseUrl: string,
-): string | undefined => {
-  if (!relativeUrl) return undefined;
-  try {
-    if (relativeUrl.startsWith('//')) {
-      return new URL(baseUrl).protocol + relativeUrl;
-    }
-    if (
-      relativeUrl.startsWith('http://') ||
-      relativeUrl.startsWith('https://')
-    ) {
-      return relativeUrl;
-    }
-    // Remove trailing slash from baseUrl if present
-    const normalizedBase = baseUrl.endsWith('/')
-      ? baseUrl.slice(0, -1)
-      : baseUrl;
-
-    // Remove leading slash from relativeUrl if present
-    const normalizedRelative = relativeUrl.startsWith('/')
-      ? relativeUrl.slice(1)
-      : relativeUrl;
-
-    //    return `${normalizedBase}/${normalizedRelative}`;
-    return new URL(normalizedRelative, normalizedBase).href;
-  } catch {
-    return undefined;
-  }
-};
