@@ -24,7 +24,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '11.0.0';
+  version = '12.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -144,12 +144,14 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     for (let page = 1; page <= totalPages; page++) {
       const chaptersUrl = `${this.site}content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
+      console.log('Fetching chapters from URL:', chaptersUrl);
       const chapterRes = await fetchApi(chaptersUrl, {
         headers: defaultHeaders,
       });
       if (!chapterRes.ok) continue;
 
       const chapterJson = await chapterRes.json();
+      console.log(chapterJson);
       if (chapterJson.code !== 0 || !chapterJson.data?.records) continue;
 
       chapterJson.data.records.forEach((c: any) => {
@@ -183,6 +185,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     const chapterUrl = chapterPath;
+    console.log('Parsing chapter from URL:', chapterUrl);
     if (!chapterUrl) throw new Error('Invalid chapter URL');
 
     const result = await fetchApi(chapterUrl, {
@@ -191,6 +194,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     if (!result.ok) throw new Error('Failed to fetch chapter');
 
     const dataJson = await result.json();
+    console.log(dataJson);
     const c = dataJson.data;
 
     if (!c || !c.content) return 'Error: Chapter content is empty';
