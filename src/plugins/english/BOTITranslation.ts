@@ -24,7 +24,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '8.0.0';
+  version = '9.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -91,7 +91,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novelUrl = makeAbsolute(novelPath, this.site);
+    const novelUrl = novelPath;
     console.log('Parsing novel from URL:', novelUrl);
     if (!novelUrl) throw new Error('Invalid novel URL');
 

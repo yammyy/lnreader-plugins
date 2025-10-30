@@ -76,7 +76,7 @@
 		"name": "BOTITranslation",
 		"site": "https://api.mystorywave.com/story-wave-backend/api/v1/",
 		"lang": "English",
-		"version": "8.0.0",
+		"version": "9.0.0",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/.js/src/plugins/english/BOTITranslation.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dest-dev/public/static/src/en/BOTI/favicon.png"
 	},
