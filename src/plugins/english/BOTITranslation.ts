@@ -6,7 +6,6 @@ import { NovelStatus } from '@libs/novelStatus';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { storage } from '@libs/storage';
 
-const siteDomain = 'botitranslation.com';
 const defaultHeaders = {
   'Accept': 'application/json, text/plain, */*',
   'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,zh-TW;q=0.7,zh-CN;q=0.6,zh;q=0.5',
@@ -25,7 +24,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '6.0.0';
+  version = '7.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -101,6 +100,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     if (!result.ok) throw new Error('Failed to fetch novel');
 
     const json = await result.json();
+    console.log(json);
 
     if (json.code !== 0 || !json.data) throw new Error('Invalid API response');
 
@@ -217,6 +217,8 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
       headers: defaultHeaders,
     });
     const json = await res.json();
+
+    console.log(json);
     const list = json?.data?.records || [];
 
     const novels: Plugin.NovelItem[] = list.map((book: any) => ({
