@@ -90,6 +90,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/dragonholic/icon.png"
 	},
 	{
+		"id": "lulobox",
+		"name": "Lulobox",
+		"site": "https://lulobox.cc/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/Lulobox[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/lulobox/icon.png"
+	},
+	{
 		"id": "novelupdates",
 		"name": "Novel Updates",
 		"site": "https://www.novelupdates.com/",
