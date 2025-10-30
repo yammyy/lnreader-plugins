@@ -6,13 +6,25 @@ import { NovelStatus } from '@libs/novelStatus';
 import { Filters, FilterTypes } from '@libs/filterInputs';
 import { storage } from '@libs/storage';
 
-const siteDomain = 'botitranslation.com';
+const defaultHeaders = {
+  'Accept': 'application/json, text/plain, */*',
+  'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,zh-TW;q=0.7,zh-CN;q=0.6,zh;q=0.5',
+  'Cache-Control': 'no-cache',
+  'DNT': '1', // optional, Do Not Track
+  'lang': 'en_US', // required by API
+  'Origin': 'https://botitranslation.com', // usually required for CORS
+  'Pragma': 'no-cache',
+  'Referer': 'https://botitranslation.com/', // sometimes required
+  'Site-Domain': 'botitranslation.com', // custom API header
+  'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+};
 
 class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
-  site = 'https://api.mystorywave.com/story-wave-backend/api/';
-  version = '1.0.0';
+  site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
+  version = '2.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -50,9 +62,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   } satisfies Filters;
 
   imageRequestInit = {
-    headers: {
-      Referer: 'https://botitranslation.com/',
-    },
+    headers: defaultHeaders,
   };
 
   async popularNovels(
@@ -62,39 +72,36 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const genreParam = filters.genres.value.length
       ? '&genre=' + filters.genres.value.join(',')
       : '&genre=1';
-    const url = `${this.site}api/v1/content/books/rank/readCounts?pageNumber=${pageNo}&pageSize=20${genreParam}`;
+    const url = `${this.site}content/books/rank/readCounts?pageNumber=${pageNo}&pageSize=20${genreParam}`;
+    console.log('Fetching popular novels from URL:', url);
 
     const res = await fetchApi(url, {
-      headers: {
-        lang: 'en_US',
-        'site-domain': 'botitranslation.com',
-      },
+      headers: defaultHeaders,
     });
     if (!res.ok) throw new Error('Failed to fetch popular novels');
 
     const json = await res.json();
-    const list = json?.data?.records || [];
+    const list = json?.data?.list || [];
 
     return list.map((book: any) => ({
-      name: book.bookName,
-      path: makeAbsolute(`/api/v1/content/books/${book.id}`, this.site) || '',
-      cover: book.bookCoverUrl || defaultCover,
+      name: book.title,
+      path: `${this.site}content/books/${book.id}` || '',
+      cover: book.coverImgUrl || defaultCover,
     }));
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novelUrl = makeAbsolute(novelPath, this.site);
+    const novelUrl = novelPath;
+    console.log('Parsing novel from URL:', novelUrl);
     if (!novelUrl) throw new Error('Invalid novel URL');
 
     const result = await fetchApi(novelUrl, {
-      headers: {
-        lang: 'en_US',
-        'site-domain': 'botitranslation.com',
-      },
+      headers: defaultHeaders,
     });
     if (!result.ok) throw new Error('Failed to fetch novel');
 
     const json = await result.json();
+    console.log(json);
 
     if (json.code !== 0 || !json.data) throw new Error('Invalid API response');
 
@@ -136,19 +143,18 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      const chaptersUrl = `https://api.mystorywave.com/story-wave-backend/api/v1/content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
+      const chaptersUrl = `${this.site}content/chapters/page?sortDirection=ASC&bookId=${data.id}&pageNumber=${page}&pageSize=${pageSize}`;
+      console.log('Fetching chapters from URL:', chaptersUrl);
       const chapterRes = await fetchApi(chaptersUrl, {
-        headers: {
-          lang: 'en_US',
-          'site-domain': 'botitranslation.com',
-        },
+        headers: defaultHeaders,
       });
       if (!chapterRes.ok) continue;
 
       const chapterJson = await chapterRes.json();
-      if (chapterJson.code !== 0 || !chapterJson.data?.records) continue;
+      console.log(chapterJson);
+      if (chapterJson.code !== 0 || !chapterJson.data?.list) continue;
 
-      chapterJson.data.records.forEach((c: any) => {
+      chapterJson.data.list.forEach((c: any) => {
         // Format date as "YYYY-MM-DD"
         let releaseTime: string | undefined = undefined;
         if (c.publishTime) {
@@ -165,7 +171,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
             name: locked
               ? `🔒 Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`
               : `Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`,
-            path: makeAbsolute(`v1/content/chapters/${c.id}`, this.site) || '',
+            path: `${this.site}content/chapters/${c.id}` || '',
             releaseTime: releaseTime || undefined,
           });
         }
@@ -178,18 +184,17 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const chapterUrl = makeAbsolute(chapterPath, this.site);
+    const chapterUrl = chapterPath;
+    console.log('Parsing chapter from URL:', chapterUrl);
     if (!chapterUrl) throw new Error('Invalid chapter URL');
 
     const result = await fetchApi(chapterUrl, {
-      headers: {
-        lang: 'en_US',
-        'site-domain': 'botitranslation.com',
-      },
+      headers: defaultHeaders,
     });
     if (!result.ok) throw new Error('Failed to fetch chapter');
 
     const dataJson = await result.json();
+    console.log(dataJson);
     const c = dataJson.data;
 
     if (!c || !c.content) return 'Error: Chapter content is empty';
@@ -209,20 +214,22 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
     searchTerm: string,
     pageNo: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `${this.site}api/v1/content/books/search?keyWord=${encodeURIComponent(searchTerm)}&pageNumber=${pageNo}&pageSize=50`;
+    const query = searchTerm.trim().replace(/\s+/g, '+');
+    const url = `${this.site}content/books/search?keyWord=${query}&pageNumber=${pageNo}&pageSize=50`;
+    console.log('Searching novels from URL:', url);
+
     const res = await fetchApi(url, {
-      headers: {
-        lang: 'en_US',
-        'site-domain': 'botitranslation.com',
-      },
+      headers: defaultHeaders,
     });
     const json = await res.json();
-    const list = json?.data?.records || [];
+
+    console.log(json);
+    const list = json?.data?.list || []; // instead of json?.data?.records
 
     const novels: Plugin.NovelItem[] = list.map((book: any) => ({
-      name: book.bookName || 'Unknown',
-      path: makeAbsolute(`/api/v1/content/books/${book.id}`, this.site) || '',
-      cover: book.bookCoverUrl || defaultCover,
+      name: book.title || 'Unknown',
+      path: `${this.site}content/books/${book.id}` || '',
+      cover: book.coverImgUrl || defaultCover,
     }));
     return novels;
   }
