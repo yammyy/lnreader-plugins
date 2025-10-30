@@ -24,7 +24,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '12.0.0';
+  version = '13.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -152,9 +152,9 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
       const chapterJson = await chapterRes.json();
       console.log(chapterJson);
-      if (chapterJson.code !== 0 || !chapterJson.data?.records) continue;
+      if (chapterJson.code !== 0 || !chapterJson.data?.list) continue;
 
-      chapterJson.data.records.forEach((c: any) => {
+      chapterJson.data.list.forEach((c: any) => {
         // Format date as "YYYY-MM-DD"
         let releaseTime: string | undefined = undefined;
         if (c.publishTime) {
