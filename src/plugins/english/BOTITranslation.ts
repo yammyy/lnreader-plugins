@@ -24,14 +24,20 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
   id = 'BOTITranslation';
   name = 'BOTITranslation';
   site = 'https://api.mystorywave.com/story-wave-backend/api/v1/';
-  version = '2.0.0';
+  version = '3.0.0';
   icon = 'src/en/BOTI/favicon.png';
 
   hideLocked = storage.get('hideLocked');
+  hideVIP = storage.get('hideVIP');
   pluginSettings = {
     hideLocked: {
       value: '',
       label: 'Hide locked chapters',
+      type: 'Switch',
+    },
+    hideVIP: {
+      value: '',
+      label: 'Hide VIP chapters',
       type: 'Switch',
     },
   };
@@ -137,8 +143,7 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
 
     // === Fetch chapters from API ===
     const pageSize = 100;
-    const totalChapters = data.publishedChapters || 0;
-    const totalPages = Math.ceil(totalChapters / pageSize);
+    let totalPages = 1;
 
     const chapters: Plugin.ChapterItem[] = [];
 
@@ -154,6 +159,9 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
       console.log(chapterJson);
       if (chapterJson.code !== 0 || !chapterJson.data?.list) continue;
 
+      console.log('Всего страниц с главами ' + chapterJson.data.totalPages);
+      totalPages = chapterJson.data.totalPages;
+
       chapterJson.data.list.forEach((c: any) => {
         // Format date as "YYYY-MM-DD"
         let releaseTime: string | undefined = undefined;
@@ -164,13 +172,20 @@ class BOTITranslationPlugin implements Plugin.PluginBase {
           const dd = String(date.getDate()).padStart(2, '0');
           releaseTime = `${yyyy}-${mm}-${dd}`;
         }
-        const locked = c.paywallStatus === 'charge';
 
-        if (!(locked && this.hideLocked)) {
+        // ---- Determine lock/VIP status ----
+        const locked = c.paywallStatus === 'charge';
+        const isVip = c.tier > 0;
+
+        // ---- Emoji prefix ----
+        let prefix = '';
+        if (locked) prefix = '🔒 ';
+        else if (isVip) prefix = '💎 ';
+
+        if (!(locked && this.hideLocked) && !(isVip && this.hideVIP)) {
+          const chapterName = `${prefix}Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`;
           chapters.push({
-            name: locked
-              ? `🔒 Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`
-              : `Chapter ${String(c.chapterOrder).padStart(5, '0')}. ${c.title}`,
+            name: chapterName,
             path: `${this.site}content/chapters/${c.id}` || '',
             releaseTime: releaseTime || undefined,
           });

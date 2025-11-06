@@ -22,8 +22,8 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   id = 'bikuge';
   name = '笔趣阁 (ab9a1c1018b5.5df7ec.cfd)';
   icon = 'src/cn/mde2a0a8/icon.png';
-  site = 'https://87bd21b0b1f922b7160.5df7ec.cfd/';
-  version = '27.2.4';
+  site = 'https://93f8512c890cd16909.4c7f720b2.lol/';
+  version = '27.2.5';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
