@@ -3,6 +3,7 @@ import { fetchApi, fetchText } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { NovelStatus } from '@libs/novelStatus';
 import { defaultCover } from '@libs/defaultCover';
+import { storage } from '@libs/storage';
 
 class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   private fetchOptions = {
@@ -23,11 +24,24 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   name = '笔趣阁 (ab9a1c1018b5.5df7ec.cfd)';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://93f8512c890cd16909.4c7f720b2.lol/';
-  version = '27.2.5';
+  version = '28.2.5';
+
+  siteName = storage.get('siteName');
+  pluginSettings = {
+    siteName: {
+      value: '',
+      label: 'Site name',
+      type: 'TextInput',
+    },
+  };
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
-    const body = await fetchText(this.site, this.fetchOptions);
+    let url = this.site;
+    if (this.siteName.trim() !== '') {
+      url = this.siteName;
+    }
+    const body = await fetchText(url, this.fetchOptions);
     if (body === '') throw Error('无法获取小说列表，请检查网络');
 
     const $ = parseHTML(body);
@@ -63,7 +77,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
       novels.push({
         name: novelName,
         cover: undefined, // no cover available in this section
-        path: novelPath.replace(this.site, ''),
+        path: novelPath.replace(url, ''),
       });
     });
 
@@ -71,7 +85,11 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novelUrl = makeAbsolute(novelPath, this.site);
+    let url = this.site;
+    if (this.siteName.trim() !== '') {
+      url = this.siteName;
+    }
+    const novelUrl = makeAbsolute(novelPath, url);
     if (!novelUrl) throw new Error('Invalid novel URL');
 
     const result = await fetchApi(novelUrl);
@@ -172,7 +190,11 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   async parseChapterList(
     chapterListPath: string,
   ): Promise<Plugin.ChapterItem[]> {
-    const chapterListUrl = makeAbsolute(chapterListPath, this.site);
+    let url = this.site;
+    if (this.siteName.trim() !== '') {
+      url = this.siteName;
+    }
+    const chapterListUrl = makeAbsolute(chapterListPath, url);
     if (!chapterListUrl) return [];
 
     const result = await fetchApi(chapterListUrl);
@@ -205,7 +227,11 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
 
   async parseChapter(chapterPath: string): Promise<string> {
     // Start from absolute chapter URL (handles relative or absolute input)
-    let currentUrl = new URL(chapterPath, this.site).toString();
+    let url = this.site;
+    if (this.siteName.trim() !== '') {
+      url = this.siteName;
+    }
+    let currentUrl = new URL(chapterPath, url).toString();
 
     // Base path of the chapter used to decide if next link is "same chapter part"
     // e.g. "/book/61808/1183"
@@ -286,12 +312,16 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
     // This site only returns first page, skip others
     if (pageNo > 1) return [];
 
-    const url = `${this.site}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
+    let siteUrl = this.site;
+    if (this.siteName.trim() !== '') {
+      siteUrl = this.siteName;
+    }
+    const url = `${siteUrl}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
 
     const response = await fetch(url, {
       headers: {
         'accept': 'application/json',
-        'referer': `${this.site}s?q=${encodeURIComponent(searchTerm)}`,
+        'referer': `${siteUrl}s?q=${encodeURIComponent(searchTerm)}`,
         'sec-ch-ua':
           '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
         'sec-ch-ua-mobile': '?0',
