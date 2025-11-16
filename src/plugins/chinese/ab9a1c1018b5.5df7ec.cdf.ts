@@ -24,7 +24,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   name = '笔趣阁 (ab9a1c1018b5.5df7ec.cfd)';
   icon = 'src/cn/mde2a0a8/icon.png';
   site = 'https://93f8512c890cd16909.4c7f720b2.lol/';
-  version = '28.2.5';
+  version = '29.2.5';
 
   siteName = storage.get('siteName');
   pluginSettings = {
@@ -38,9 +38,10 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
     let url = this.site;
-    if (this.siteName.trim() !== '') {
+    if (!this.siteName) {
       url = this.siteName;
     }
+    this.fetchOptions.headers.Referer = url;
     const body = await fetchText(url, this.fetchOptions);
     if (body === '') throw Error('无法获取小说列表，请检查网络');
 
@@ -86,7 +87,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     let url = this.site;
-    if (this.siteName.trim() !== '') {
+    if (!this.siteName) {
       url = this.siteName;
     }
     const novelUrl = makeAbsolute(novelPath, url);
@@ -191,7 +192,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
     chapterListPath: string,
   ): Promise<Plugin.ChapterItem[]> {
     let url = this.site;
-    if (this.siteName.trim() !== '') {
+    if (!this.siteName) {
       url = this.siteName;
     }
     const chapterListUrl = makeAbsolute(chapterListPath, url);
@@ -228,9 +229,10 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     // Start from absolute chapter URL (handles relative or absolute input)
     let url = this.site;
-    if (this.siteName.trim() !== '') {
+    if (!this.siteName) {
       url = this.siteName;
     }
+    this.fetchOptions.headers.Referer = url;
     let currentUrl = new URL(chapterPath, url).toString();
 
     // Base path of the chapter used to decide if next link is "same chapter part"
@@ -313,7 +315,7 @@ class ab9a1c1018b5Plugin implements Plugin.PluginBase {
     if (pageNo > 1) return [];
 
     let siteUrl = this.site;
-    if (this.siteName.trim() !== '') {
+    if (!this.siteName) {
       siteUrl = this.siteName;
     }
     const url = `${siteUrl}user/search.html?q=${encodeURIComponent(searchTerm)}&so=undefined`;
