@@ -8,7 +8,7 @@ class TuyePlugin implements Plugin.PluginBase {
   id = 'tuye';
   name = '途阅小说';
   site = 'https://mfirst.haiyuangabiou.com/';
-  version = '1.0.0';
+  version = '5.0.0';
   icon = 'src/cn/tuye/favicon.png';
 
   imageRequestInit = {
@@ -206,14 +206,17 @@ class TuyePlugin implements Plugin.PluginBase {
   async parseChapter(chapterPath: string): Promise<string> {
     const chapterUrl = makeAbsolute(chapterPath, this.site);
     if (!chapterUrl) throw new Error('Invalid chapter URL');
+    console.log('Parsing chapter URL:', chapterUrl);
 
     let currentUrl = chapterUrl;
+    console.log('Starting URL for chapter parsing:', currentUrl);
 
     // Base path of the chapter, WITHOUT _2, _3 etc
     const initialBase = new URL(chapterUrl).pathname.replace(
       /(_\d+)?\.html$/,
       '',
     );
+    console.log('Initial base path:', initialBase);
 
     const parts: string[] = [];
     let chapterTitle = '';
@@ -250,17 +253,20 @@ class TuyePlugin implements Plugin.PluginBase {
 
       // ===== NEXT PAGE LINK =====
       const nextRel = $root
-        .find('ul.zhangjieinfo li')
+        .find('ul#zhangjieinfo li')
         .eq(2)
         .find('a')
         .attr('href');
+      console.log('Next part relative URL:', nextRel);
       if (!nextRel) break;
 
       const nextUrl = makeAbsolute(nextRel, this.site);
       if (!nextUrl) break;
+      console.log('Next part URL:', nextUrl);
 
       // ===== detect if this is TRUE next part or next CHAPTER =====
-      const nextBase = new URL(nextUrl).pathname.replace(/(_\d+)?\.html$/, '');
+      const nextBase = nextRel.replace(/(_\d+)?\.html$/, '');
+      console.log('Next base path:', nextBase);
 
       // 🔥 STOP if it's a new chapter
       if (nextBase !== initialBase) break;
