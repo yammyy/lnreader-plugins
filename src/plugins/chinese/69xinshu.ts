@@ -10,7 +10,7 @@ class XinShu69 implements Plugin.PluginBase {
   name = '69书吧';
   icon = 'src/cn/69xinshu/icon.png';
   site = 'https://69shuba.com/';
-  version = '1.1.2';
+  version = '30.1.2';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
     if (pageNo > 1) return [];
