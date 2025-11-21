@@ -55,7 +55,7 @@ var Syosetu = /** @class */ (function () {
         this.icon = 'src/jp/syosetu/icon.png';
         this.site = 'https://yomou.syosetu.com/';
         this.novelPrefix = 'https://ncode.syosetu.com';
-        this.version = '1.1.2';
+        this.version = '3.1.2';
         this.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         };
@@ -208,7 +208,7 @@ var Syosetu = /** @class */ (function () {
     };
     Syosetu.prototype.parseNovel = function (novelPath) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, loadedCheerio, status, novel, chapters, lastPageLink, lastPageMatch, totalPages, pagePromises, pageResults;
+            var result, body, loadedCheerio, status, novel, summary, summaryP, chapters, lastPageLink, lastPageMatch, totalPages, pagePromises, pageResults;
             var _this = this;
             var _a;
             return __generator(this, function (_b) {
@@ -247,11 +247,18 @@ var Syosetu = /** @class */ (function () {
                             genres: (_a = loadedCheerio('meta[property="og:description"]')
                                 .attr('content')) === null || _a === void 0 ? void 0 : _a.split(' ').join(','), // Get genres from meta tag
                         };
-                        // Get summary if available
-                        novel.summary = loadedCheerio('#novel_ex').html() || '';
+                        summaryP = loadedCheerio('#novel_ex').html() || '';
+                        if (!summaryP.length) return [3 /*break*/, 4];
+                        return [4 /*yield*/, translate(summaryP, 'ru')];
+                    case 3:
+                        summary = _b.sent();
+                        summary = summary.replace(/<[^>]+>/g, ''); // strip tags
+                        _b.label = 4;
+                    case 4:
+                        novel.summary = summary;
                         chapters = [];
                         lastPageLink = loadedCheerio('.c-pager__item--last').attr('href');
-                        if (!!lastPageLink) return [3 /*break*/, 3];
+                        if (!!lastPageLink) return [3 /*break*/, 5];
                         // If no pagination, just parse chapters from the current page
                         loadedCheerio('.p-eplist__sublist').each(function (_, element) {
                             var chapterLink = loadedCheerio(element).find('a');
@@ -271,8 +278,8 @@ var Syosetu = /** @class */ (function () {
                                 });
                             }
                         });
-                        return [3 /*break*/, 5];
-                    case 3:
+                        return [3 /*break*/, 7];
+                    case 5:
                         lastPageMatch = lastPageLink.match(/\?p=(\d+)/);
                         totalPages = lastPageMatch ? parseInt(lastPageMatch[1]) : 1;
                         pagePromises = Array.from({ length: totalPages }, function (_, i) {
@@ -281,7 +288,7 @@ var Syosetu = /** @class */ (function () {
                             });
                         });
                         return [4 /*yield*/, Promise.all(pagePromises)];
-                    case 4:
+                    case 6:
                         pageResults = _b.sent();
                         // Process each page's chapters
                         pageResults.forEach(function (pageBody) {
@@ -305,8 +312,8 @@ var Syosetu = /** @class */ (function () {
                                 }
                             });
                         });
-                        _b.label = 5;
-                    case 5:
+                        _b.label = 7;
+                    case 7:
                         novel.chapters = chapters;
                         return [2 /*return*/, novel];
                 }
@@ -315,7 +322,7 @@ var Syosetu = /** @class */ (function () {
     };
     Syosetu.prototype.parseChapter = function (chapterPath) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, body, cheerioQuery, chapterTitle, chapterContent;
+            var result, body, cheerioQuery, chapterTitle, chapterContent, rawHtml, chapterText;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, fetch_1.fetchApi)(this.novelPrefix + chapterPath, {
@@ -331,8 +338,17 @@ var Syosetu = /** @class */ (function () {
                         });
                         chapterTitle = cheerioQuery('.p-novel__title').html() || '';
                         chapterContent = cheerioQuery('.p-novel__body .p-novel__text:not([class*="p-novel__text--"])').html() || '';
-                        // Combine title and content with proper HTML structure
-                        return [2 /*return*/, "<h1>".concat(chapterTitle, "</h1>").concat(chapterContent)];
+                        rawHtml = '<h1>' + chapterTitle + '</h1>' + '🐼<br>' + chapterContent;
+                        chapterText = '';
+                        if (!rawHtml.trim()) return [3 /*break*/, 4];
+                        return [4 /*yield*/, translateHtmlByLinePlain(rawHtml, 'ru')];
+                    case 3:
+                        chapterText = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 4:
+                        chapterText = ''; // or keep as is, no translation
+                        _a.label = 5;
+                    case 5: return [2 /*return*/, chapterText.trim()];
                 }
             });
         });
@@ -498,7 +514,7 @@ function translateChunk(chunk, lang) {
         var res, data;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=".concat(lang, "&dt=t&q=").concat(encodeURIComponent(chunk)))];
+                case 0: return [4 /*yield*/, fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=".concat(lang, "&dt=t&q=").concat(encodeURIComponent(chunk)))];
                 case 1:
                     res = _a.sent();
                     if (!res.ok)

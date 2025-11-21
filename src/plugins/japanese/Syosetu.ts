@@ -14,7 +14,7 @@ class Syosetu implements Plugin.PluginBase {
   icon = 'src/jp/syosetu/icon.png';
   site = 'https://yomou.syosetu.com/';
   novelPrefix = 'https://ncode.syosetu.com';
-  version = '1.1.2';
+  version = '3.1.2';
   headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -139,7 +139,13 @@ class Syosetu implements Plugin.PluginBase {
     };
 
     // Get summary if available
-    novel.summary = loadedCheerio('#novel_ex').html() || '';
+    let summary: string | undefined;
+    const summaryP = loadedCheerio('#novel_ex').html() || '';
+    if (summaryP.length) {
+      summary = await translate(summaryP, 'ru');
+      summary = summary.replace(/<[^>]+>/g, ''); // strip tags
+    }
+    novel.summary = summary;
 
     const chapters: Plugin.ChapterItem[] = [];
 
@@ -208,6 +214,7 @@ class Syosetu implements Plugin.PluginBase {
     novel.chapters = chapters;
     return novel;
   }
+
   async parseChapter(chapterPath: string): Promise<string> {
     const result = await fetchApi(this.novelPrefix + chapterPath, {
       headers: this.headers,
@@ -227,9 +234,18 @@ class Syosetu implements Plugin.PluginBase {
         '.p-novel__body .p-novel__text:not([class*="p-novel__text--"])',
       ).html() || '';
 
-    // Combine title and content with proper HTML structure
-    return `<h1>${chapterTitle}</h1>${chapterContent}`;
+    let rawHtml = '<h1>' + chapterTitle + '</h1>' + '🐼<br>' + chapterContent;
+    let chapterText = '';
+
+    if (rawHtml.trim()) {
+      chapterText = await translateHtmlByLinePlain(rawHtml, 'ru');
+    } else {
+      chapterText = ''; // or keep as is, no translation
+    }
+
+    return chapterText.trim();
   }
+
   async searchNovels(
     searchTerm: string,
     pageNo: number,
@@ -438,7 +454,7 @@ export function makeChunksFromHTML(html: string, max = 1000): string[] {
 // Перевод одного куска через Google Translate
 async function translateChunk(chunk: string, lang: string): Promise<string> {
   const res = await fetch(
-    `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=${lang}&dt=t&q=${encodeURIComponent(chunk)}`,
+    `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=${lang}&dt=t&q=${encodeURIComponent(chunk)}`,
   );
   if (!res.ok) throw new Error(`Translate failed ${res.status} ${chunk}`);
   const data = await res.json();
