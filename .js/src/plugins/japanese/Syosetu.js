@@ -147,9 +147,7 @@ var Syosetu = /** @class */ (function () {
                                     case 1: return [4 /*yield*/, (_a.sent()).text()];
                                     case 2:
                                         html = _a.sent();
-                                        loadedCheerio = (0, cheerio_1.load)(html, {
-                                            decodeEntities: false,
-                                        });
+                                        loadedCheerio = (0, cheerio_1.load)(html);
                                         if (parseInt(loadedCheerio('.is-current').html() || '1') !== pagenumber)
                                             return [2 /*return*/, []];
                                         novels = [];
@@ -178,34 +176,6 @@ var Syosetu = /** @class */ (function () {
             });
         });
     };
-    Syosetu.prototype.parseChaptersFromPage = function (loadedCheerio) {
-        return __awaiter(this, void 0, void 0, function () {
-            var chapters;
-            var _this = this;
-            return __generator(this, function (_a) {
-                chapters = [];
-                loadedCheerio('.p-eplist__sublist').each(function (_, element) {
-                    var chapterLink = loadedCheerio(element).find('a');
-                    var chapterUrl = chapterLink.attr('href');
-                    var chapterName = chapterLink.text().trim();
-                    var releaseDate = loadedCheerio(element)
-                        .find('.p-eplist__update')
-                        .text()
-                        .trim()
-                        .split(' ')[0]
-                        .replace(/\//g, '-');
-                    if (chapterUrl) {
-                        chapters.push({
-                            name: chapterName,
-                            releaseTime: releaseDate,
-                            path: chapterUrl.replace(_this.novelPrefix, ''),
-                        });
-                    }
-                });
-                return [2 /*return*/, chapters];
-            });
-        });
-    };
     Syosetu.prototype.parseNovel = function (novelPath) {
         return __awaiter(this, void 0, void 0, function () {
             var result, body, loadedCheerio, status, novel, summary, summaryP, chapters, lastPageLink, lastPageMatch, totalPages, pagePromises, pageResults;
@@ -221,7 +191,7 @@ var Syosetu = /** @class */ (function () {
                         return [4 /*yield*/, result.text()];
                     case 2:
                         body = _b.sent();
-                        loadedCheerio = (0, cheerio_1.load)(body, { decodeEntities: false });
+                        loadedCheerio = (0, cheerio_1.load)(body);
                         status = 'Unknown';
                         if (loadedCheerio('.c-announce').text().includes('連載中') ||
                             loadedCheerio('.c-announce').text().includes('未完結')) {
@@ -292,7 +262,7 @@ var Syosetu = /** @class */ (function () {
                         pageResults = _b.sent();
                         // Process each page's chapters
                         pageResults.forEach(function (pageBody) {
-                            var pageCheerio = (0, cheerio_1.load)(pageBody, { decodeEntities: false });
+                            var pageCheerio = (0, cheerio_1.load)(pageBody);
                             pageCheerio('.p-eplist__sublist').each(function (_, element) {
                                 var chapterLink = pageCheerio(element).find('a');
                                 var chapterUrl = chapterLink.attr('href');
@@ -333,9 +303,7 @@ var Syosetu = /** @class */ (function () {
                         return [4 /*yield*/, result.text()];
                     case 2:
                         body = _a.sent();
-                        cheerioQuery = (0, cheerio_1.load)(body, {
-                            decodeEntities: false,
-                        });
+                        cheerioQuery = (0, cheerio_1.load)(body);
                         chapterTitle = cheerioQuery('.p-novel__title').html() || '';
                         chapterContent = cheerioQuery('.p-novel__body .p-novel__text:not([class*="p-novel__text--"])').html() || '';
                         rawHtml = '<h1>' + chapterTitle + '</h1>' + '🐼<br>' + chapterContent;
@@ -374,7 +342,7 @@ var Syosetu = /** @class */ (function () {
                                         return [4 /*yield*/, result.text()];
                                     case 2:
                                         body = _a.sent();
-                                        cheerioQuery = (0, cheerio_1.load)(body, { decodeEntities: false });
+                                        cheerioQuery = (0, cheerio_1.load)(body);
                                         pageNovels = [];
                                         // find class=searchkekka_box
                                         cheerioQuery('.searchkekka_box').each(function (i, e) {
