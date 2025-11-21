@@ -75,4 +75,66 @@ pluginFiles.forEach(file => {
   }
 });
 
-console.log('All done ✅');
+console.log('Chinese done ✅');
+
+const PLUGIN_DIR_JP = path.join('./src/plugins/japanese'); // китайские плагины
+
+// Получаем все файлы плагинов
+const pluginFiles_JP = fs
+  .readdirSync(PLUGIN_DIR_JP)
+  .filter(f => f.endsWith('.ts'));
+
+pluginFiles_JP.forEach(file => {
+  const filePath = path.join(PLUGIN_DIR_JP, file);
+  let content = fs.readFileSync(filePath, 'utf-8');
+
+  // Удаляем всё после export default new ...Plugin();
+  const exportRegex = /export\s+default\s+new\s+\w+Plugin\s*\(\s*\)\s*;/;
+  const match = content.match(exportRegex);
+  if (match) {
+    content = content.slice(0, match.index + match[0].length);
+  } else {
+    console.warn(
+      `Cannot find "export default new ...Plugin();" in ${file}, skipping deletion`,
+    );
+  }
+
+  // Проверяем, что код makeAbsolute ещё не вставлен
+  const hasMakeAbsolute =
+    content.includes('function makeAbsolute(') ||
+    content.includes('export const makeAbsolute =');
+  if (!hasMakeAbsolute) {
+    // Вставляем makeAbsolute
+    content +=
+      '\n\n' +
+      `//DON'T CHANGE IT HERE!` +
+      '\n\n' +
+      '//This is the copy of @libs/isAbsolutUrl/makeAbsolute.' +
+      '\n' +
+      makeAbsoluteCode +
+      '\n';
+    console.log(`Inserted makeAbsolute into ${file}`);
+  } else {
+    console.log(`makeAbsolute already exists in ${file}, skipped`);
+  }
+
+  // Проверяем, что код translate ещё не вставлен
+  if (
+    !content.includes('function translate(') &&
+    !content.includes('export async function translate(')
+  ) {
+    // Вставляем код в конец файла (после export default)
+    content +=
+      '\n' +
+      '//This is the copy of @libs/googleTranslate.ts' +
+      '\n' +
+      translateCode +
+      '\n';
+    fs.writeFileSync(filePath, content, 'utf-8');
+    console.log(`Inserted translate into ${file}`);
+  } else {
+    console.log(`translate already exists in ${file}, skipped`);
+  }
+});
+
+console.log('Japanese done ✅');
