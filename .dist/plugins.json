@@ -116,5 +116,14 @@
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/novelupdates.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/icon.png",
 		"customCSS": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/customCSS.css"
+	},
+	{
+		"id": "yomou.syosetu",
+		"name": "Syosetu",
+		"site": "https://yomou.syosetu.com/",
+		"lang": "日本語",
+		"version": "3.1.2",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/Syosetu.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/icon.png"
 	}
 ]
