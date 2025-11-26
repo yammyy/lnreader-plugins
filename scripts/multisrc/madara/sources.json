@@ -20,6 +20,10 @@
   {
     "id": "foxaholic18",
     "sourceSite": "https://18.foxaholic.com/",
-    "sourceName": "Foxaholic18"
+    "sourceName": "Foxaholic18",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
