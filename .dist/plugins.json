@@ -99,6 +99,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/dragonholic/icon.png"
 	},
 	{
+		"id": "foxaholic",
+		"name": "Foxaholic",
+		"site": "https://www.foxaholic.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/Foxaholic[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/foxaholic/icon.png"
+	},
+	{
 		"id": "foxaholic18",
 		"name": "Foxaholic18",
 		"site": "https://18.foxaholic.com/",

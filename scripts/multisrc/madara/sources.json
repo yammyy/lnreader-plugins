@@ -25,5 +25,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "foxaholic",
+    "sourceSite": "https://www.foxaholic.com/",
+    "sourceName": "Foxaholic",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
