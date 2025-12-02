@@ -43,5 +43,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "novelbike",
+    "sourceSite": "https://novelbike.com/",
+    "sourceName": "NovelBike",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
