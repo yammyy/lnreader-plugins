@@ -90,6 +90,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/tuye/favicon.png"
 	},
 	{
+		"id": "azurechronicles",
+		"name": "Azure Chronicles",
+		"site": "https://azurechronicles.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/AzureChronicles[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/azurechronicles/icon.png"
+	},
+	{
 		"id": "BOTITranslation",
 		"name": "BOTITranslation",
 		"site": "https://api.mystorywave.com/story-wave-backend/api/v1/",

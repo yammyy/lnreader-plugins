@@ -34,5 +34,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "azurechronicles",
+    "sourceSite": "https://azurechronicles.com/",
+    "sourceName": "Azure Chronicles",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
