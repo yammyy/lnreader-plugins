@@ -181,6 +181,15 @@
 		"customCSS": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/customCSS.css"
 	},
 	{
+		"id": "readHive",
+		"name": "ReadHive",
+		"site": "https://readhive.org/",
+		"lang": "English",
+		"version": "10.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/readhive.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/readhive/favicon.jpg"
+	},
+	{
 		"id": "ShanghaiFantasy",
 		"name": "Shanghai Fantasy",
 		"site": "https://shanghaifantasy.com/",
