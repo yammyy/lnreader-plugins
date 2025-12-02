@@ -1,16 +1,15 @@
 import { load as parseHTML } from 'cheerio';
-import { fetchApi, fetchFile } from '@libs/fetch';
+import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@typings/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
-import { Filters, FilterTypes } from '@libs/filterInputs';
 import { storage } from '@libs/storage';
 
 class ShanghaiFantasyPlugin implements Plugin.PluginBase {
   id = 'ShanghaiFantasy';
   name = 'Shanghai Fantasy';
   site = 'https://shanghaifantasy.com/';
-  version = '1.0.0';
+  version = '11.0.0';
   icon = 'src/en/shanghaifantasy/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -66,8 +65,10 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const novelUrl = makeAbsolute(novelPath, this.site);
+    console.log('ShanghaiFantasyPlugin: parseNovel:', novelPath);
+    const novelUrl = novelPath;
     if (!novelUrl) throw new Error('Invalid novel URL');
+    console.log('Parsing novel:', novelUrl);
 
     const result = await fetchApi(novelUrl);
     if (!result.ok) throw new Error('Failed to fetch novel');
@@ -96,6 +97,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     // --- Cover ---
     const cover =
       $container.find('img').first().attr('src')?.trim() || defaultCover;
+    console.log('Cover URL:', cover);
 
     // Assume $container already points to the 'div.max-w-5xl' (or top container) for this page.
 
@@ -103,6 +105,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     // e.g. from: const novelName = $container.find('div.ml-5 > p.mb-3').first().text().trim();
     let novelName =
       $container.find('div.ml-5 > p.mb-3').first().text().trim() || 'Untitled';
+    console.log('Novel Name:', novelName);
 
     // --- The label block: div.ml-5 > div.mb-3 (contains multiple <p>) ---
     const $labelBlock = $container.find('div.ml-5 > div.mb-3').first();
@@ -113,59 +116,68 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     let translatedChaptersCount: number | undefined;
 
     if ($labelBlock && $labelBlock.length) {
-      const $ps = $labelBlock.find('p.text-sm'); // selects all <p class="text-sm ...">
+      // Container with all <p class="text-sm ...">
+      const $ps = $labelBlock.find('p.text-sm');
 
-      // (1) First p → Raw Title (append to novelName)
-      if ($ps.eq(0).length) {
-        // The text node after the <span> contains raw title; get full text then remove label
-        const firstText = $ps.eq(0).text().trim();
-        // Remove leading label like "Raw Title:" (anything before the label's closing span)
-        // We'll try to remove the span text if present:
-        const spanLabel0 = $ps.eq(0).find('span').first().text().trim();
-        rawTitle = firstText.replace(spanLabel0, '').trim();
-        if (rawTitle) {
-          novelName = `${novelName} / ${rawTitle}`;
+      // Loop through each <p> in the block
+      $ps.each(function () {
+        const $p = $(this);
+
+        // The label in <span> — for example "Author:", "Raw Title:", etc.
+        const label = $p.find('span').first().text().trim();
+
+        // The value is p-text minus the label text
+        const value = $p.text().replace(label, '').trim();
+
+        switch (label) {
+          case 'Raw Title:':
+            rawTitle = value;
+            break;
+
+          case 'Author:':
+            author = value;
+            break;
+
+          case 'Translated Chapters:':
+            // Extract integer from value
+            const num = value.match(/\d+/);
+            if (num) translatedChaptersCount = Number(num[0]);
+            break;
+
+          // Ignored fields
+          case 'Translator:':
+          case 'Update:':
+          case 'Total Chapters:':
+            break;
+
+          default:
+            // Unknown label → ignore silently
+            break;
         }
+      });
+
+      // Append raw title into novelName if present
+      if (rawTitle) {
+        novelName = `${novelName} / ${rawTitle}`;
       }
 
-      // (2) Second p -> ignore (do nothing)
-
-      // (3) Third p -> Author
-      if ($ps.eq(2).length) {
-        const p3Text = $ps.eq(2).text().trim();
-        const spanLabel3 = $ps.eq(2).find('span').first().text().trim();
-        author = p3Text.replace(spanLabel3, '').trim() || undefined;
-      }
-
-      // (4) Fourth p -> Translator -> ignore
-
-      // (5) Fifth p -> Update -> ignore
-
-      // (6) Sixth p -> Translated Chapters (number)
-      if ($ps.eq(5).length) {
-        const p6Text = $ps.eq(5).text().trim();
-        const spanLabel6 = $ps.eq(5).find('span').first().text().trim();
-        const afterLabel = p6Text.replace(spanLabel6, '').trim();
-
-        // Sometimes the number may be mixed with text; extract first integer found
-        const numMatch = afterLabel.match(/(\d+)/);
-        if (numMatch) {
-          translatedChaptersCount = parseInt(numMatch[1], 10);
-        }
-      }
+      // Debug logs
+      console.log('Raw Title:', rawTitle);
+      console.log('Author:', author);
+      console.log('Translated Chapters:', translatedChaptersCount);
     }
 
     // --- Status ---
-    const rawStatus = $container.find('div.ml-5 > a').attr('href')?.trim();
+    const rawStatus = $container.find('div.ml-5 > a > p').text()?.trim();
+    console.log('Raw status string:', rawStatus);
     let status = '';
-    if (rawStatus) {
-      const s = rawStatus.toLowerCase();
-      if (s.includes('Completed')) status = NovelStatus.Completed;
-      else if (s.includes('Ongoing')) status = NovelStatus.Ongoing;
-      else if (s.includes('Hiatus')) status = NovelStatus.OnHiatus;
-      else if (s.includes('Dropped')) status = NovelStatus.Cancelled;
-      else status = NovelStatus.Unknown;
-    }
+    const s = rawStatus.toLowerCase();
+    if (s.includes('completed')) status = NovelStatus.Completed;
+    else if (s.includes('ongoing')) status = NovelStatus.Ongoing;
+    else if (s.includes('hiatus')) status = NovelStatus.OnHiatus;
+    else if (s.includes('dropped')) status = NovelStatus.Cancelled;
+    else status = NovelStatus.Unknown;
+    console.log('Status:', status);
 
     // --- Genre ---// Find the container with all the genre spans
     const $genreContainer = $container.find('div.gap-1');
@@ -178,6 +190,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
       .get(); // convert jQuery result to a normal JS array
     console.log(genres);
     const genreString = genres.join(', ');
+    console.log('Genres:', genreString);
 
     /* ============================================================
        SUMMARY
@@ -199,6 +212,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     ============================================================ */
 
     const novelId = Number($('ul#chapterList').attr('data-cat'));
+    console.log('Novel ID (category):', novelId);
 
     const chapters = await this.loadShanghaiFantasyChapters(
       novelId,
@@ -234,6 +248,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     const pageSize = 100; // Default: big chunks
     let currentPage = 1; // Start from page #1
     let totalPages = Math.ceil(translatedCount / pageSize); // Will be updated after first request
+    console.log('Total pages to load:', totalPages);
 
     // Continue fetching until all pages are loaded
     while (currentPage <= totalPages) {
@@ -367,7 +382,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     return chapterHtml;
   }
 
-  async searchNovel(query: string, page = 1): Promise<any[]> {
+  async searchNovels(query: string, page: number): Promise<Plugin.NovelItem[]> {
     // 1. Build API URL
     const apiUrl =
       `https://shanghaifantasy.com/wp-json/fiction/v1/novels/` +
@@ -391,13 +406,10 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     }
 
     // 4. Normalize to LnReader's internal format
-    const novels = data.map(item => ({
-      title: item.title ?? '',
-      path: item.permalink ?? '', // page URL
-      cover: item.novelImage ?? '',
-      intro: item.novelIntro ?? '',
-      genres: item.novelGenres ?? [],
-      status: item.novelStat ?? '',
+    const novels: Plugin.NovelItem[] = data.map((book: any) => ({
+      name: book.title ?? '',
+      path: book.permalink ?? '', // page URL
+      cover: book.novelImage ?? '',
     }));
 
     return novels;
