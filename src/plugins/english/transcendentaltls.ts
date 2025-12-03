@@ -8,7 +8,7 @@ class transcendentaltlsPlugin implements Plugin.PluginBase {
   id = 'transcendentaltls';
   name = 'Transcendental';
   site = 'https://transcendentaltls.com/api/general/';
-  version = '1.0.0';
+  version = '2.0.0';
   icon = 'src/en/transcendentaltls/favicon.ico';
 
   hideLocked = storage.get('hideLocked');
@@ -21,6 +21,7 @@ class transcendentaltlsPlugin implements Plugin.PluginBase {
   };
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
+    if (pageNo > 1) return [];
     const url = `${this.site}mainContent`;
     console.log('Fetching home page URL:', url);
 
@@ -169,7 +170,7 @@ class transcendentaltlsPlugin implements Plugin.PluginBase {
     if (!c || !c.content.html) return 'Error: Chapter content is empty';
 
     // Prepend <h1> with chapter number and title
-    let chapterHtml = `<h1>Chapter ${c.chapterNumber}. ${c.title}</h1> 🐼<br> \n${c.content}`;
+    let chapterHtml = `<h1>Chapter ${c.chapterNumber}. ${c.title}</h1> 🐼<br> \n${c.content.html}`;
 
     return chapterHtml.trim();
   }
