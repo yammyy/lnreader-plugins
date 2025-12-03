@@ -153,6 +153,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/litcity/favicon.png"
 	},
 	{
+		"id": "lovelyblossoms",
+		"name": "Lovely Blossoms",
+		"site": "https://lovelyblossoms.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/LovelyBlossoms[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/lovelyblossoms/icon.png"
+	},
+	{
 		"id": "lulobox",
 		"name": "Lulobox",
 		"site": "https://lulobox.cc/",

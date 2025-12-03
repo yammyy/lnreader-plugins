@@ -52,5 +52,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "lovelyblossoms",
+    "sourceSite": "https://lovelyblossoms.com/",
+    "sourceName": "Lovely Blossoms",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
