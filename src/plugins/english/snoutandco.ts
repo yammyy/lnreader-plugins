@@ -8,7 +8,7 @@ class snoutandcoPlugin implements Plugin.PluginBase {
   id = 'snoutandco';
   name = 'Snout and co';
   site = 'https://snoutandco.ca/';
-  version = '1.0.0';
+  version = '10.0.0';
   icon = 'src/en/snoutandco/favicon.png';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
@@ -53,13 +53,12 @@ class snoutandcoPlugin implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    console.log('Parsing novel:', novelPath);
-
     // ============================================================
     // 1) LOAD index.html AND FIND THE MATCHING <a href="...">
     // ============================================================
 
     const indexUrl = this.site + 'index.html';
+    console.log('Parsing novel:', indexUrl);
     const indexRes = await fetchApi(indexUrl);
     if (!indexRes.ok) throw new Error('Failed to load index.html');
 
@@ -132,43 +131,37 @@ class snoutandcoPlugin implements Plugin.PluginBase {
     // 3) FETCH CHAPTER LIST FROM API USING novelTag
     // ============================================================
 
-    console.log('Parsing chapters:', novelPath);
+    console.log('Parsing chapters via API:', novelPath);
 
-    const chapterRes = await fetchApi(novelPath);
-    if (!chapterRes.ok)
-      throw new Error('Failed to load novel page: ' + novelPath);
+    // 1️⃣ Extract folder from novelPath
+    const urlObj = new URL(novelPath);
+    const folder = urlObj.searchParams.get('folder');
+    if (!folder) throw new Error('Folder not found in novelPath: ' + novelPath);
+    console.log('Detected folder:', folder);
 
-    const chapterHtml = await chapterRes.text();
-    const $c = parseHTML(chapterHtml);
+    // 2️⃣ Fetch chapters JSON
+    const chaptersJsonUrl = `${this.site}${folder}/chapters.json`;
+    console.log('Fetching chapters JSON:', chaptersJsonUrl);
 
-    // Select the UL that contains chapters
-    const $chaptersList = $c('ul#chapter-list');
+    const chaptersRes = await fetchApi(chaptersJsonUrl);
+    if (!chaptersRes.ok)
+      throw new Error('Failed to fetch chapters.json: ' + chaptersJsonUrl);
 
-    const chapters: Plugin.ChapterItem[] = [];
+    const chaptersData = await chaptersRes.json();
+    if (!chaptersData.chapters || !Array.isArray(chaptersData.chapters)) {
+      throw new Error('Invalid chapters.json structure');
+    }
 
-    // Today's date in yyyy-mm-dd
+    // 3️⃣ Build chapter list
     const today = new Date().toISOString().split('T')[0];
-
-    // Loop through all LI elements inside the chapter list
-    $chaptersList.find('li').each((_i, li) => {
-      const $li = $c(li);
-      const $a = $li.find('a');
-
-      if ($a.length === 0) return; // No link → skip
-
-      // Extract chapter path
-      const chapterPath = $a.attr('href')?.trim() || '';
-
-      // Extract visible chapter title
-      const chapterTitle = $a.text().trim();
-
-      // Push result into chapters list
-      chapters.push({
-        name: chapterTitle,
+    const chapters: Plugin.ChapterItem[] = chaptersData.chapters.map(
+      (c: any) => ({
+        name: c.title || `Chapter ${c.filename}`,
+        path: `${this.site}${folder}/chapters/${c.filename}`,
         releaseTime: today,
-        path: chapterPath,
-      });
-    });
+      }),
+    );
+    console.log(`Total chapters found: ${chapters.length}`);
 
     // ============================================================
     // 4) RETURN MERGED RESULT
@@ -187,25 +180,29 @@ class snoutandcoPlugin implements Plugin.PluginBase {
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
+    console.log('Parsing chapter from URL:', chapterPath);
     const chapterUrl = makeAbsolute(chapterPath, this.site);
     if (!chapterUrl) throw new Error('Invalid chapter URL');
 
-    const result = await fetchApi(chapterUrl);
-    if (!result.ok) throw new Error('Failed to fetch chapter');
+    const res = await fetchApi(chapterUrl);
+    if (!res.ok) throw new Error('Failed to fetch chapter');
 
-    const $ = parseHTML(await result.text());
+    // Get plain text of chapter
+    const text = await res.text();
+    if (!text || !text.trim()) return 'Error: Chapter content is empty';
 
-    const title = `<h1>${$('h1#chapter-title').first().text().trim() || ''}</h1>`;
+    // Wrap each line (or paragraph) in <p>
+    // Split by double newlines or single newlines
+    const paragraphs = text
+      .split(/\r?\n\r?\n|\r?\n/) // split by empty line or newline
+      .map(p => p.trim())
+      .filter(p => p.length > 0) // remove empty lines
+      .map(p => `<p>${p}</p>`); // wrap in <p>
 
-    // === Target the main content container ===
-    const $content = $('pre#chapter-content');
-    if (!$content.length) return 'Error: Could not find chapter content';
+    // Add chapter title at the top
+    const title = `<h1>${chapterPath.split('/').pop()?.replace('.txt', '') || ''}</h1>`;
 
-    let chapterText = $content.html() || 'Error: Chapter content is empty';
-
-    chapterText = title + '🐼<br>' + chapterText;
-
-    return chapterText.trim();
+    return title + '🐼<br>\n' + paragraphs.join('\n');
   }
 
   async searchNovels(
