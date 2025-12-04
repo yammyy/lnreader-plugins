@@ -208,6 +208,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/shanghaifantasy/favicon.png"
 	},
 	{
+		"id": "snoutandco",
+		"name": "Snout and co",
+		"site": "https://snoutandco.ca/",
+		"lang": "English",
+		"version": "1.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/snoutandco.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/snoutandco/favicon.png"
+	},
+	{
 		"id": "transcendentaltls",
 		"name": "Transcendental",
 		"site": "https://transcendentaltls.com/api/general/",
