@@ -153,12 +153,10 @@ class snoutandcoPlugin implements Plugin.PluginBase {
     }
 
     // 3️⃣ Build chapter list
-    const today = new Date().toISOString().split('T')[0];
     const chapters: Plugin.ChapterItem[] = chaptersData.chapters.map(
       (c: any) => ({
         name: c.title || `Chapter ${c.filename}`,
         path: `${this.site}${folder}/chapters/${c.filename}`,
-        releaseTime: today,
       }),
     );
     console.log(`Total chapters found: ${chapters.length}`);
