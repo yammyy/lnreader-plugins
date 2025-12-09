@@ -8,7 +8,7 @@ class snoutandcoPlugin implements Plugin.PluginBase {
   id = 'snoutandco';
   name = 'Snout and co';
   site = 'https://snoutandco.ca/';
-  version = '10.0.0';
+  version = '11.0.0';
   icon = 'src/en/snoutandco/favicon.png';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {

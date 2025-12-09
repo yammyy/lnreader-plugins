@@ -90,6 +90,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/tuye/favicon.png"
 	},
 	{
+		"id": "aerialrain",
+		"name": "Aerial Rain Translation",
+		"site": "https://aerialrain.com/",
+		"lang": "English",
+		"version": "1.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/aerialrain.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/aerialrain/favicon.png"
+	},
+	{
 		"id": "azurechronicles",
 		"name": "Azure Chronicles",
 		"site": "https://azurechronicles.com/",
@@ -221,7 +230,7 @@
 		"name": "Snout and co",
 		"site": "https://snoutandco.ca/",
 		"lang": "English",
-		"version": "10.0.0",
+		"version": "11.0.0",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/snoutandco.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/snoutandco/favicon.png"
 	},
