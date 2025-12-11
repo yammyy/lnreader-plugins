@@ -103,7 +103,7 @@
 		"name": "Ai Hrist Dream Translations",
 		"site": "https://www.aihristdreamtranslations.com/",
 		"lang": "English",
-		"version": "2.0.0",
+		"version": "3.0.0",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/aihristdream.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/aihristdream/favicon.jpg"
 	},

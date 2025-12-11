@@ -8,7 +8,7 @@ class aihristdreamPlugin implements Plugin.PluginBase {
   id = 'aihristdream';
   name = 'Ai Hrist Dream Translations';
   site = 'https://www.aihristdreamtranslations.com/';
-  version = '2.0.0';
+  version = '3.0.0';
   icon = 'src/en/aihristdream/favicon.jpg';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
@@ -97,7 +97,12 @@ class aihristdreamPlugin implements Plugin.PluginBase {
 
     let collectingDescription = false;
     let descriptionParts: string[] = [];
-    let blockquoteSummary = $content.find('blockquote').text().trim();
+    let blockquoteSummary = $content
+      .find('blockquote')
+      .text()
+      .trim()
+      .replace(/^Description:\s*/i, '')
+      .trim();
     let h5AuthorRaw = $content.find('h5').text().trim();
     let h5Author = '';
     if (/^Written by:/i.test(h5AuthorRaw)) {
