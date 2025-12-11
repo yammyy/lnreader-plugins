@@ -8,7 +8,7 @@ class shuku52Plugin implements Plugin.PluginBase {
   id = '52shuku';
   name = '52书库';
   site = 'https://www.52shuku.net/';
-  version = '9.4.5';
+  version = '9.5.0';
   icon = 'src/cn/52shuku/faviconV2.png';
 
   imageRequestInit = {
@@ -138,72 +138,49 @@ class shuku52Plugin implements Plugin.PluginBase {
 
     const $ = parseHTML(await result.text());
 
-    // === Target the main content container ===
+    // === Target container ===
     const $content = $('article.article-content');
     if (!$content.length) return 'Error: Could not find chapter content';
 
-    // === Remove junk elements ===
+    // === Remove junk ===
     $content
       .find(
         'script, style, iframe, button, hr, [class*="ads"], [id*="ads"], [class*="recommend"], [class*="pagination2"]',
       )
       .remove();
 
-    // === Remove <p> that are clearly junk ===
+    // Remove comments
+    $content.contents().each((_i, node) => {
+      if (node.type === 'comment') $(node).remove();
+    });
+
+    // Remove known junk blocks
+    $content.find('#lineCorrect, [id*="52shuku"], [class*="52shuku"]').remove();
+
+    // Remove paragraphs containing 52shuku text or spans
     $content.find('p').each((_i, el) => {
       const $p = $(el);
-      const pText = $p.text().trim();
-
-      // Remove if:
-      // - Empty
-      // - Contains certain junk phrases
-      // - Contains <span> tag
-      if (pText.length === 0 || $p.find('span').length > 0) {
+      if ($p.text().includes('52书库') || $p.find('span').length > 0) {
         $p.remove();
       }
     });
 
-    // === Remove comments ===
-    $content
-      .contents()
-      .filter(function () {
-        return this.type === 'comment';
-      })
-      .remove();
-    // === Get valid content ===
-    const $validDivsOrPs = $content.children().filter((i, el) => {
-      const $el = $(el);
-
-      // keep <p> elements directly
-      if (el.tagName === 'p') return true;
-
-      // keep <div> if it's not junk
-      if (el.tagName === 'div') {
-        const $paragraphs = $el.children('p');
-        if ($paragraphs.length === 1 && /52shuku/i.test($paragraphs.text()))
-          return false;
-        return true;
-      }
-
-      // ignore other tags
-      return false;
+    $content.find('div').each((_i, div) => {
+      $(div).replaceWith($(div).html() || '');
     });
 
-    // Get all <p> inside the selected nodes
-    const resultHtml = $validDivsOrPs
-      .map((i, el) =>
-        $(el).find('p').length
-          ? $(el)
-              .find('p')
-              .map((j, p) => $(p).html())
-              .get()
-          : $(el).html(),
-      )
-      .get()
-      .join('\n');
+    const chapterTitleRegex = /^第\s*\d+\s*章/;
+    $content.find('p').each((_i, el) => {
+      const $p = $(el);
+      const text = $p.text().trim();
 
-    // === Get cleaned HTML ===
-    let rawHtml = resultHtml;
+      if (chapterTitleRegex.test(text)) {
+        $p.replaceWith(`<h1>${text}</h1>`);
+      }
+    });
+
+    // === Final HTML ===
+    const rawHtml = $content.html() || '';
     if (!rawHtml) return 'Error: Chapter content was empty';
     let chapterText = '';
 
@@ -213,7 +190,7 @@ class shuku52Plugin implements Plugin.PluginBase {
       chapterText = ''; // or keep as is, no translation
     }
 
-    chapterText = chapterPath + '🐼<br>' + chapterText;
+    chapterText = chapterPath + '🐼<br><br>' + chapterText;
 
     return chapterText.trim();
   }
