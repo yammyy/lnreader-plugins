@@ -8,7 +8,7 @@ class aihristdreamPlugin implements Plugin.PluginBase {
   id = 'aihristdream';
   name = 'Ai Hrist Dream Translations';
   site = 'https://www.aihristdreamtranslations.com/';
-  version = '1.0.0';
+  version = '2.0.0';
   icon = 'src/en/aihristdream/favicon.jpg';
 
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
@@ -98,6 +98,14 @@ class aihristdreamPlugin implements Plugin.PluginBase {
     let collectingDescription = false;
     let descriptionParts: string[] = [];
     let blockquoteSummary = $content.find('blockquote').text().trim();
+    let h5AuthorRaw = $content.find('h5').text().trim();
+    let h5Author = '';
+    if (/^Written by:/i.test(h5AuthorRaw)) {
+      let raw = h5AuthorRaw.replace(/^Written by:\s*/i, '').trim();
+      // Remove brackets: 小小牧童 (Xiao Xiao Mutong) -> 小小牧童
+      raw = raw.replace(/\(.*?\)/g, '').trim();
+      h5Author = raw;
+    }
 
     pList.each((_i, pEl) => {
       const $p = $(pEl);
@@ -178,6 +186,14 @@ class aihristdreamPlugin implements Plugin.PluginBase {
       summary = blockquoteSummary;
     } else if (descriptionParts.length > 0) {
       summary = descriptionParts.join('<br>\n\n').trim();
+    }
+
+    // If h5 exists → author comes from h5
+    let authorName = '';
+    if (h5Author) {
+      authorName = h5Author;
+    } else {
+      authorName = author;
     }
 
     // ======================================================
@@ -262,7 +278,7 @@ class aihristdreamPlugin implements Plugin.PluginBase {
       path: novelPath,
       name,
       cover,
-      author,
+      author: authorName,
       summary,
       genres,
       status,
