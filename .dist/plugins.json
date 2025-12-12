@@ -253,6 +253,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/transcendentaltls/favicon.ico"
 	},
 	{
+		"id": "wordrain69",
+		"name": "Word Rain",
+		"site": "https://wordrain69.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/WordRain[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/wordrain69/icon.png"
+	},
+	{
 		"id": "yomou.syosetu",
 		"name": "Syosetu",
 		"site": "https://yomou.syosetu.com/",

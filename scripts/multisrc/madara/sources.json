@@ -61,5 +61,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "wordrain69",
+    "sourceSite": "https://wordrain69.com/",
+    "sourceName": "Word Rain",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
