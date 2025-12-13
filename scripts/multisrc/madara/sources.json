@@ -70,5 +70,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "moonlightteatime",
+    "sourceSite": "https://moonlightteatime.com/",
+    "sourceName": "Moonlight Teatime",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]

@@ -84,12 +84,35 @@ class NovelUpdates implements Plugin.PluginBase {
     const body = await response.text();
     const loadedCheerio = parseHTML(body);
 
+    const novelNamePart1 = loadedCheerio('.seriestitlenu').text().trim();
+    let novelNamePart2 = '';
+    if (loadedCheerio('#editassociated').find('br').length > 0) {
+      const html = loadedCheerio('#editassociated').html() || '';
+      // Split by <br> (supports <br>, <br/>, <br />)
+      const parts = html
+        .split(/<br\s*\/?>/i)
+        .map(s => s.trim()) // remove surrounding spaces
+        .filter(s => s.length > 0); // remove empty items
+      // Last part of the text
+      const lastPart = parts[parts.length - 1];
+      console.log(lastPart);
+      novelNamePart2 = ` / ${lastPart}`;
+    } else {
+      if (loadedCheerio('#editassociated').text().trim() === '') {
+        novelNamePart2 = '';
+      } else {
+        novelNamePart2 = ` / ${loadedCheerio('#editassociated').text().trim()}`;
+      }
+    }
+    const novelName = novelNamePart1 + novelNamePart2;
+
     const novel: Plugin.SourceNovel = {
+      name: novelName,
       path: novelPath,
-      name: loadedCheerio('.seriestitlenu').text() || 'Untitled',
       cover: loadedCheerio('.wpb_wrapper img').attr('src'),
       chapters: [],
     };
+
     novel.author = loadedCheerio('#authtag')
       .map((_, el) => loadedCheerio(el).text().trim())
       .toArray()
