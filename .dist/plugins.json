@@ -216,6 +216,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/fictioneer/novelib/icon.png"
 	},
 	{
+		"id": "novelishuniverse",
+		"name": "Novelish Universe",
+		"site": "https://novelishuniverse.com/",
+		"lang": "English",
+		"version": "1.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/novelishuniverse.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelishuniverse/favicon.png"
+	},
+	{
 		"id": "novelupdates",
 		"name": "Novel Updates",
 		"site": "https://www.novelupdates.com/",
