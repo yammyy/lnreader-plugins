@@ -9,7 +9,7 @@ class novelishuniversePlugin implements Plugin.PluginBase {
   id = 'novelishuniverse';
   name = 'Novelish Universe';
   site = 'https://novelishuniverse.com/';
-  version = '1.0.0';
+  version = '2.0.0';
   icon = 'src/en/novelishuniverse/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -40,17 +40,25 @@ class novelishuniversePlugin implements Plugin.PluginBase {
 
     $('div.hotstack div.hotoday div.inhotoday').each((_i, liEl) => {
       const $li = $(liEl);
+      console.log($li.html());
 
-      /* ----------- LINK, PATH, TITLE ----------- */
+      /* ----------- LINK, PATH ----------- */
       const $link = $li.find('a').first();
       const novelPath = $link.attr('href')?.trim() || '';
-      const novelName = $link.attr('oldtitle')?.trim() || '';
+      console.log('Novel path:', novelPath);
 
       /* -------------- COVER IMAGE -------------- */
-      const cover = $li.find('img').attr('src')?.trim() || defaultCover;
+      const cover = $link.find('img').attr('data-src')?.trim() || defaultCover;
+      console.log('Cover URL:', cover);
+
+      /* ----------- NAME ----------- */
+      const $title = $li.find('div#artodtitle').first();
+      const novelName = $title.text().trim();
+      console.log('Novel name:', novelName);
 
       /* ----------- VALIDATION + ADD ------------ */
-      if (novelPath && novelName && !processedPaths.has(novelPath)) {
+      if (!processedPaths.has(novelPath)) {
+        console.log('Adding popular novel:', novelName);
         novels.push({
           name: novelName,
           path: novelPath,
@@ -60,6 +68,7 @@ class novelishuniversePlugin implements Plugin.PluginBase {
         processedPaths.add(novelPath);
       }
     });
+    console.log('Total popular novels found:', novels.length);
 
     return novels;
   }
@@ -104,7 +113,7 @@ class novelishuniversePlugin implements Plugin.PluginBase {
     const titlePart1 = $meta.find('h1').first().text().trim();
     const titlePart2 = $meta.find('span.alter').first().text().trim();
     const novelName = (
-      titlePart1 + (titlePart2 ? ` - ${titlePart2}` : '')
+      titlePart1 + (titlePart2 ? ` / ${titlePart2}` : '')
     ).trim();
 
     // --- Author ---
@@ -207,6 +216,7 @@ class novelishuniversePlugin implements Plugin.PluginBase {
 
     $lis.each((index, li) => {
       const $li = $(li);
+      console.log($li.html());
 
       /* -------------------------------
          Chapter ID → path
@@ -218,8 +228,27 @@ class novelishuniversePlugin implements Plugin.PluginBase {
       /* -------------------------------
          Chapter number
       -------------------------------- */
-      const rawNum = $li
-        .find('.epl-num')
+      const $eplNum = $li.find('div.epl-num');
+
+      /* -------------------------------
+         Premium (🍁 → 💎)
+      -------------------------------- */
+      console.log('Checking if chapter is premium/locked');
+      console.log($eplNum.html());
+      const text = $eplNum.text();
+      // Regex to match most emojis
+      const emojiPattern =
+        /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/gi;
+      const hasEmoji = emojiPattern.test(text);
+      console.log(hasEmoji); // true
+      const isPremium = hasEmoji;
+      const prefix = isPremium ? '💎 ' : '';
+      console.log('Is premium:', isPremium ? '💎' : '');
+      if (isPremium && this.hideLocked) {
+        return;
+      }
+
+      const rawNum = $eplNum
         .contents()
         .filter((_, node) => node.type === 'text')
         .text()
@@ -229,20 +258,12 @@ class novelishuniversePlugin implements Plugin.PluginBase {
       const paddedNumber = String(chapterNumber).padStart(5, '0');
 
       /* -------------------------------
-         Premium (🍁 → 💎)
-      -------------------------------- */
-      const isPremium = $li.find('.epl-num img').length > 0;
-      const prefix = isPremium ? '💎 ' : '';
-
-      if (isPremium && this.hideLocked) {
-        return;
-      }
-
-      /* -------------------------------
          Title
       -------------------------------- */
       const title =
         $li.find('.epl-title').text().trim() || `Chapter ${chapterNumber}`;
+
+      console.log(`Chapter found: ${prefix}Chapter ${paddedNumber}. ${title}`);
 
       /* -------------------------------
          Release date
@@ -330,6 +351,7 @@ class novelishuniversePlugin implements Plugin.PluginBase {
       searchUrl = `${this.site}/page/${pageNo}/?s=${encodeURIComponent(searchTerm)}`;
     }
 
+    console.log('Searching novels with URL:', searchUrl);
     const result = await fetchApi(searchUrl);
     if (!result.ok) {
       throw new Error('Failed to fetch search results');
@@ -341,20 +363,20 @@ class novelishuniversePlugin implements Plugin.PluginBase {
     // Iterate through all novels in the search results
     $('div.listupd article.maindet').each((_i, el) => {
       const $article = $(el);
+      console.log($article.html());
       const $thumbImg = $article.find('div.mdthumb > a > img');
       const $infoLink = $article.find('div.mdinfo > h2 > a');
 
-      const novelCover = $thumbImg.attr('src')?.trim() || defaultCover;
-      const novelPath = $infoLink.attr('href')?.trim();
+      const novelCover = $thumbImg.attr('data-src')?.trim() || defaultCover;
+      const novelPath = $infoLink.attr('href')?.trim() || '';
       const novelName = $infoLink.text().trim();
+      console.log('Novel found:', novelName, novelPath, novelCover);
 
-      if (novelPath && novelName) {
-        novels.push({
-          name: novelName,
-          path: novelPath,
-          cover: makeAbsolute(novelCover, this.site) || defaultCover,
-        });
-      }
+      novels.push({
+        name: novelName,
+        path: novelPath,
+        cover: novelCover || defaultCover,
+      });
     });
 
     return novels;
