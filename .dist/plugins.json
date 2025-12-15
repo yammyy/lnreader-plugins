@@ -126,6 +126,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/BOTI/favicon.png"
 	},
 	{
+		"id": "brightnovels",
+		"name": "Bright Novels",
+		"site": "https://brightnovels.com/",
+		"lang": "English",
+		"version": "1.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/brightnovels.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/brightnovels/favicon.png"
+	},
+	{
 		"id": "dragonholic",
 		"name": "Dragonholic",
 		"site": "https://dragonholic.com/",
