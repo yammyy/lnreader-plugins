@@ -79,5 +79,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "storiesecho",
+    "sourceSite": "https://storiesecho.com/",
+    "sourceName": "Stories Echo",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]

@@ -271,6 +271,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/snoutandco/favicon.png"
 	},
 	{
+		"id": "storiesecho",
+		"name": "Stories Echo",
+		"site": "https://storiesecho.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/StoriesEcho[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/storiesecho/icon.png"
+	},
+	{
 		"id": "transcendentaltls",
 		"name": "Transcendental",
 		"site": "https://transcendentaltls.com/api/general/",
