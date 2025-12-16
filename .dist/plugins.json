@@ -81,6 +81,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/novel543/icon.png"
 	},
 	{
+		"id": "quanben",
+		"name": "Quanben",
+		"site": "https://www.quanben.io/",
+		"lang": "中文, 汉语, 漢語",
+		"version": "1.0.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/chinese/Quanben.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/cn/quanben/icon.png"
+	},
+	{
 		"id": "tuye",
 		"name": "途阅小说",
 		"site": "https://mfirst.haiyuangabiou.com/",
@@ -135,15 +144,6 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/brightnovels/favicon.png"
 	},
 	{
-		"id": "dragonholic",
-		"name": "Dragonholic",
-		"site": "https://dragonholic.com/",
-		"lang": "English",
-		"version": "1.0.8",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/Dragonholic[madara].js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/dragonholic/icon.png"
-	},
-	{
 		"id": "FancyTL",
 		"name": "FancyTL",
 		"site": "https://api.mystorywave.com/story-wave-backend/api/v1/",
@@ -151,15 +151,6 @@
 		"version": "1.0.0",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/FancyTL.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/fancyTL/favicon.png"
-	},
-	{
-		"id": "foxaholic",
-		"name": "Foxaholic",
-		"site": "https://www.foxaholic.com/",
-		"lang": "English",
-		"version": "1.0.8",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/Foxaholic[madara].js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/foxaholic/icon.png"
 	},
 	{
 		"id": "foxaholic18",
@@ -225,15 +216,6 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/novelbike/icon.png"
 	},
 	{
-		"id": "novelib",
-		"name": "NovelLib",
-		"site": "https://novelib.com",
-		"lang": "English",
-		"version": "1.0.0",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/NovelLib[fictioneer].js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/fictioneer/novelib/icon.png"
-	},
-	{
 		"id": "novelishuniverse",
 		"name": "Novelish Universe",
 		"site": "https://novelishuniverse.com/",
@@ -247,7 +229,7 @@
 		"name": "Novel Updates",
 		"site": "https://www.novelupdates.com/",
 		"lang": "English",
-		"version": "0.9.3",
+		"version": "0.9.4",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/novelupdates.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/icon.png",
 		"customCSS": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelupdates/customCSS.css"
@@ -305,6 +287,15 @@
 		"version": "1.0.8",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/WordRain[madara].js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/wordrain69/icon.png"
+	},
+	{
+		"id": "kakuyomu",
+		"name": "kakuyomu",
+		"site": "https://kakuyomu.jp",
+		"lang": "日本語",
+		"version": "1.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/kakuyomu.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/kakuyomu/icon.png"
 	},
 	{
 		"id": "yomou.syosetu",
