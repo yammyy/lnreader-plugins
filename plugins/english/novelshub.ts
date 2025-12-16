@@ -19,7 +19,7 @@ class novelshubPlugin implements Plugin.PluginBase {
   name = 'Novels Hub';
   site = 'https://novelshub.org/';
   apiSite = 'https://api.novelshub.org/api/';
-  version = '11.0.0';
+  version = '12.0.0';
   icon = 'src/en/novelshub/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -219,12 +219,9 @@ class novelshubPlugin implements Plugin.PluginBase {
       name: data.postTitle || 'Untitled',
       cover: data.featuredImage || defaultCover,
       summary: data.postContent
-        .replace(/\\u003c/g, '<')
-        .replace(/\\u003e/g, '>')
-        .replace(/\\u0026/g, '&')
-        .replace(/\\"/g, '"')
-        .replace(/\\\\/g, '\\')
-        .replace(/\\n/g, '<br>'),
+        .replace(/u003c/g, '<')
+        .replace(/u003e/g, '>')
+        .replace(/u0026/g, '&'),
       author: data.author || undefined,
       artist: data.artist || undefined,
       genres: Array.isArray(data.genres)
