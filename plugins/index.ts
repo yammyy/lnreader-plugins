@@ -18,6 +18,7 @@ import p_10009 from '@plugins/english/readhive';
 import p_10010 from '@plugins/english/ShanghaiFantasy';
 import p_10011 from '@plugins/english/snoutandco';
 import p_10012 from '@plugins/english/transcendentaltls';
+import p_10013 from '@plugins/english/novelshub';
 import p_20001 from '@plugins/chinese/52shuku';
 import p_20002 from '@plugins/chinese/69xinshu';
 import p_20003 from '@plugins/chinese/ab9a1c1018b5.5df7ec.cdf';
@@ -55,6 +56,7 @@ const PLUGINS: Plugin.PluginBase[] = [
   p_10010,
   p_10011,
   p_10012,
+  p_10013,
   p_20001,
   p_20002,
   p_20003,
