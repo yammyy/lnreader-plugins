@@ -1,0 +1,426 @@
+{
+    "filters": {
+      "genre[]": {
+        "type": "Checkbox",
+        "label": "Genre",
+        "value": [],
+        "options": [
+          {
+            "label": "Action",
+            "value": "action"
+          },
+          {
+            "label": "Adult",
+            "value": "adult"
+          },
+          {
+            "label": "Adventure",
+            "value": "adventure"
+          },
+          {
+            "label": "Ancient",
+            "value": "ancient"
+          },
+          {
+            "label": "Apocalypse",
+            "value": "apocalypse"
+          },
+          {
+            "label": "Apocalyptic Survival",
+            "value": "apocalyptic-survival"
+          },
+          {
+            "label": "Bad Ending",
+            "value": "be"
+          },
+          {
+            "label": "Boys",
+            "value": "boys"
+          },
+          {
+            "label": "CEO",
+            "value": "ceo"
+          },
+          {
+            "label": "Chinese Novels",
+            "value": "chinese"
+          },
+          {
+            "label": "Comedy",
+            "value": "comedy"
+          },
+          {
+            "label": "Crack Fiction",
+            "value": "crack-fic"
+          },
+          {
+            "label": "Divorce",
+            "value": "divorce"
+          },
+          {
+            "label": "Drama",
+            "value": "drama"
+          },
+          {
+            "label": "Ecchi",
+            "value": "ecchi"
+          },
+          {
+            "label": "Family",
+            "value": "family"
+          },
+          {
+            "label": "Fantasy",
+            "value": "fantasy"
+          },
+          {
+            "label": "Fighting",
+            "value": "fighting"
+          },
+          {
+            "label": "Fun",
+            "value": "fun"
+          },
+          {
+            "label": "Gender Bender",
+            "value": "gender-bender"
+          },
+          {
+            "label": "Girls",
+            "value": "girl"
+          },
+          {
+            "label": "Harem",
+            "value": "harem"
+          },
+          {
+            "label": "Happy Ending",
+            "value": "he"
+          },
+          {
+            "label": "Historical",
+            "value": "historical"
+          },
+          {
+            "label": "Horror",
+            "value": "horror"
+          },
+          {
+            "label": "Horror (Horrow)",
+            "value": "horrow"
+          },
+          {
+            "label": "Infinite Flow",
+            "value": "infinite-flow"
+          },
+          {
+            "label": "Infinite Loop",
+            "value": "infiniteloop"
+          },
+          {
+            "label": "Josei",
+            "value": "josei"
+          },
+          {
+            "label": "Lit RPG",
+            "value": "litrpg"
+          },
+          {
+            "label": "Love Triangle",
+            "value": "love-triangle"
+          },
+          {
+            "label": "Lovecraftian",
+            "value": "lovecraftian"
+          },
+          {
+            "label": "Manhwa",
+            "value": "manhwa"
+          },
+          {
+            "label": "Martial Arts",
+            "value": "martial-arts"
+          },
+          {
+            "label": "Mature",
+            "value": "mature"
+          },
+          {
+            "label": "Mecha",
+            "value": "%25e6%259c%25ba%25e6%25a2%25b0"
+          },
+          {
+            "label": "Mind Bending",
+            "value": "mind-bending"
+          },
+          {
+            "label": "Mystery",
+            "value": "mystery"
+          },
+          {
+            "label": "Office Glow Up",
+            "value": "officeglowup"
+          },
+          {
+            "label": "Power Struggle",
+            "value": "power-struggle"
+          },
+          {
+            "label": "Progression Fantasy",
+            "value": "progression-fantasy"
+          },
+          {
+            "label": "Psychological",
+            "value": "psychological"
+          },
+          {
+            "label": "Rebirth",
+            "value": "rebirth"
+          },
+          {
+            "label": "Regret Redemption Arc",
+            "value": "regret-redemption-arc"
+          },
+          {
+            "label": "Revenge",
+            "value": "revenge"
+          },
+          {
+            "label": "Romance",
+            "value": "romance"
+          },
+          {
+            "label": "School Life",
+            "value": "school-life"
+          },
+          {
+            "label": "Sci-fi",
+            "value": "sci-fi"
+          },
+          {
+            "label": "Seinen",
+            "value": "seinen"
+          },
+          {
+            "label": "Short Story",
+            "value": "short-story"
+          },
+          {
+            "label": "Shoujo",
+            "value": "shoujo"
+          },
+          {
+            "label": "Shoujo Ai",
+            "value": "shoujo-ai"
+          },
+          {
+            "label": "Shounen",
+            "value": "shounen"
+          },
+          {
+            "label": "Shounen Ai",
+            "value": "shounen-ai"
+          },
+          {
+            "label": "Show business",
+            "value": "showbiz"
+          },
+          {
+            "label": "Slice of Life",
+            "value": "slice-of-life"
+          },
+          {
+            "label": "Smut",
+            "value": "smut"
+          },
+          {
+            "label": "Sports",
+            "value": "sports"
+          },
+          {
+            "label": "Strong Female Lead",
+            "value": "strong-female-lead"
+          },
+          {
+            "label": "Strong Female Lead (Protagonist)",
+            "value": "strong-female-protagonist"
+          },
+          {
+            "label": "Strong Male Lead",
+            "value": "strong-male-lead"
+          },
+          {
+            "label": "Supernatural",
+            "value": "supernatural"
+          },
+          {
+            "label": "Suspense",
+            "value": "suspense"
+          },
+          {
+            "label": "Taboo Hearts",
+            "value": "taboo-hearts"
+          },
+          {
+            "label": "Tragedy",
+            "value": "tragedy"
+          },
+          {
+            "label": "Underdog to Topdog",
+            "value": "underdogtotopdog"
+          },
+          {
+            "label": "Urban",
+            "value": "urban"
+          },
+          {
+            "label": "Web Novel (web-novel)",
+            "value": "web-novel"
+          },
+          {
+            "label": "Web Novel (webnovel)",
+            "value": "webnovel"
+          },
+          {
+            "label": "Western Fantasy",
+            "value": "western-fantasy"
+          },
+          {
+            "label": "Wuxia",
+            "value": "wuxia"
+          },
+          {
+            "label": "Xianxia",
+            "value": "xianxia"
+          },
+          {
+            "label": "Xuanhuan",
+            "value": "xuanhuan"
+          },
+          {
+            "label": "Yandere",
+            "value": "yandere"
+          },
+          {
+            "label": "Yaoi",
+            "value": "yaoi"
+          },
+          {
+            "label": "Yuri",
+            "value": "yuri"
+          }
+        ]
+      },   
+      "op": {
+        "type": "Picker",
+        "label": "Genres condition",
+        "value": "",
+        "options": [
+          {
+            "label": "OR (having one of selected genres)",
+            "value": ""
+          },
+          {
+            "label": "AND (having all selected genres)",
+            "value": "1"
+          }
+        ]
+      },
+      "author": {
+        "type": "Text",
+        "label": "Author",
+        "value": ""
+      },
+      "artist": {
+        "type": "Text",
+        "label": "Artist",
+        "value": ""
+      },
+      "release": {
+        "type": "Text",
+        "label": "Year of Released",
+        "value": ""
+      },
+      "adult": {
+        "type": "Picker",
+        "label": "Adult content",
+        "value": "",
+        "options": [
+          {
+            "label": "All",
+            "value": ""
+          },
+          {
+            "label": "None adult content",
+            "value": "0"
+          },
+          {
+            "label": "Only adult content",
+            "value": "1"
+          }
+        ]
+      },
+      "status[]": {
+        "type": "Checkbox",
+        "label": "Novel Status",
+        "value": [],
+        "options": [
+          {
+            "label": "OnGoing",
+            "value": "on-going"
+          },
+          {
+            "label": "Completed",
+            "value": "end"
+          },
+          {
+            "label": "Canceled",
+            "value": "canceled"
+          },
+          {
+            "label": "On Hold",
+            "value": "on-hold"
+          },
+          {
+            "label": "Upcoming",
+            "value": "upcoming"
+          }
+        ]
+      },
+      "m_orderby": {
+        "type": "Picker",
+        "label": "Order by",
+        "value": "",
+        "options": [
+          {
+            "label": "Relevance",
+            "value": ""
+          },
+          {
+            "label": "Latest",
+            "value": "latest"
+          },
+          {
+            "label": "A-Z",
+            "value": "alphabet"
+          },
+          {
+            "label": "Rating",
+            "value": "rating"
+          },
+          {
+            "label": "Trending",
+            "value": "trending"
+          },
+          {
+            "label": "Most Views",
+            "value": "views"
+          },
+          {
+            "label": "New",
+            "value": "new-manga"
+          }
+        ]
+      }
+    }
+  }

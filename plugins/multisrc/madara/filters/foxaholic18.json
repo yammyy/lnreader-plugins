@@ -1,0 +1,240 @@
+{
+  "filters": {
+    "genre[]": {
+      "type": "Checkbox",
+      "label": "Genre",
+      "value": [],
+      "options": [
+        {
+          "label": "Action",
+          "value": "action"
+        },
+        { 
+          "label": "Advanced chapters",
+          "value": "advanced-chapters"
+        },
+        {
+          "label": "Adventure",
+          "value": "adventure"
+        },
+        {
+          "label": "BG",
+          "value": "bg"
+        },
+        {
+          "label": "Boy's Love",
+          "value": "bl"
+        },
+        {
+          "label": "Chinese Novel",
+          "value": "chinese-novel"
+        },
+        {
+          "label": "Comedy",
+          "value": "comedy"
+        },
+        {
+          "label": "Drama",
+          "value": "drama"
+        },
+        {
+          "label": "Fantasy",
+          "value": "fantasy"
+        },
+        {
+          "label": "Girl's Love",
+          "value": "gl"
+        },
+        {
+          "label": "Harem",
+          "value": "harem"
+        },
+        {
+          "label": "Historical",
+          "value": "historical"
+        },
+        {
+          "label": "Horror",
+          "value": "horror"
+        },
+        {
+          "label": "Isekai",
+          "value": "isekai"
+        },
+        {
+          "label": "Japanese Novel",
+          "value": "japanese-novel"
+        },
+        {
+          "label": "Korean Novel",
+          "value": "korean-novel"
+        },
+        {
+          "label": "Modern",
+          "value": "modern"
+        },
+        {
+          "label": "Original Novel",
+          "value": "original-novels"
+        },
+        {
+          "label": "Quick Transmigration",
+          "value": "quick-transmigration"
+        },
+        {
+          "label": "Rebirth",
+          "value": "rebirth"
+        },
+        {
+          "label": "Romance",
+          "value": "romance"
+        },
+        {
+          "label": "School Lif",
+          "value": "school-life"
+        },
+        {
+          "label": "Suitable for work",
+          "value": "sfw"
+        },
+        {
+          "label": "Smut",
+          "value": "smut"
+        },
+        {
+          "label": "Supernatural",
+          "value": "supernatural"
+        },
+        {
+          "label": "Tragedy",
+          "value": "tragedy"
+        },
+        {
+          "label": "Transmigration",
+          "value": "transmigration"
+        }
+      ]
+    },   
+    "op": {
+      "type": "Picker",
+      "label": "Genres condition",
+      "value": "",
+      "options": [
+        {
+          "label": "OR (having one of selected genres)",
+          "value": ""
+        },
+        {
+          "label": "AND (having all selected genres)",
+          "value": "1"
+        }
+      ]
+    },
+    "author": {
+      "type": "Text",
+      "label": "Author",
+      "value": ""
+    },
+    "artist": {
+      "type": "Text",
+      "label": "Team",
+      "value": ""
+    },
+    "release": {
+      "type": "Picker",
+      "label": "Translation Status",
+      "value": "",
+      "options": [
+        {
+          "label": "Active",
+          "value": "active"
+        },
+        {
+          "label": "Dropped",
+          "value": "dropped"
+        },
+        {
+          "label": "Finished",
+          "value": "finished"
+        }
+      ]
+    },
+    "adult": {
+      "type": "Picker",
+      "label": "Adult content",
+      "value": "",
+      "options": [
+        {
+          "label": "All",
+          "value": ""
+        },
+        {
+          "label": "None adult content",
+          "value": "0"
+        },
+        {
+          "label": "Only adult content",
+          "value": "1"
+        }
+      ]
+    },
+    "status[]": {
+      "type": "Checkbox",
+      "label": "Novel Status",
+      "value": [],
+      "options": [
+        {
+          "label": "OnGoing",
+          "value": "on-going"
+        },
+        {
+          "label": "Completed",
+          "value": "end"
+        },
+        {
+          "label": "Canceled",
+          "value": "canceled"
+        },
+        {
+          "label": "On Hold",
+          "value": "on-hold"
+        },
+        {
+          "label": "Upcoming",
+          "value": "upcoming"
+        }
+      ]
+    },
+    "m_orderby": {
+      "type": "Picker",
+      "label": "Order by",
+      "value": "",
+      "options": [
+        {
+          "label": "Relevance",
+          "value": ""
+        },
+        {
+          "label": "Latest",
+          "value": "latest"
+        },
+        {
+          "label": "A-Z",
+          "value": "alphabet"
+        },
+        {
+          "label": "Trending",
+          "value": "trending"
+        },
+        {
+          "label": "Most Views",
+          "value": "views"
+        },
+        {
+          "label": "New",
+          "value": "new-manga"
+        }
+      ]
+    }
+  }
+}
