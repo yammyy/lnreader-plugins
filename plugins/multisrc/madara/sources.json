@@ -1,0 +1,74 @@
+[
+  {
+    "id": "lulobox",
+    "sourceSite": "https://lulobox.cc/",
+    "sourceName": "Lulobox",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "foxaholic18",
+    "sourceSite": "https://18.foxaholic.com/",
+    "sourceName": "Foxaholic18",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "azurechronicles",
+    "sourceSite": "https://azurechronicles.com/",
+    "sourceName": "Azure Chronicles",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "novelbike",
+    "sourceSite": "https://novelbike.com/",
+    "sourceName": "NovelBike",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "lovelyblossoms",
+    "sourceSite": "https://lovelyblossoms.com/",
+    "sourceName": "Lovely Blossoms",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "wordrain69",
+    "sourceSite": "https://wordrain69.com/",
+    "sourceName": "Word Rain",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "moonlightteatime",
+    "sourceSite": "https://moonlightteatime.com/",
+    "sourceName": "Moonlight Teatime",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  },
+  {
+    "id": "storiesecho",
+    "sourceSite": "https://storiesecho.com/",
+    "sourceName": "Stories Echo",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
+  }
+]

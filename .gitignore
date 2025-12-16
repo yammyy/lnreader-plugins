@@ -5,10 +5,11 @@ node_modules
 config.json
 
 # generated multisrc .ts files
-src/plugins/*/*\[*\]*.ts
+plugins/*/*\[*\]*.ts
 
 # ignore dist stuffs
 .DS_Store
 total.svg
 src/plugins/index.ts
 .history
+broken-sites-report.json

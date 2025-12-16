@@ -129,10 +129,15 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   prettierConfig,
   {
-    ignores: ['.js', 'docs', 'proxy_server.js'],
+    ignores: [
+      '.js',
+      'docs',
+      'proxy_server.js',
+      'plugins/*/*\\[*\\]*.ts', // Files with square brackets in their names
+    ],
   },
   {
-    files: ['./src/plugins/*/*.ts', './scripts/multisrc/*/template.ts'],
+    files: ['./plugins/*/*.ts', './plugins/multisrc/*/template.ts'],
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
@@ -141,6 +146,17 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       'no-case-declarations': 'warn',
       'no-undef': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/fetch*'],
+              message: 'Use @libs/fetch instead of @/lib/fetch',
+            },
+          ],
+        },
+      ],
     },
     languageOptions: {
       ecmaVersion: 5,
@@ -150,7 +166,7 @@ export default tseslint.config(
   },
   {
     files: ['**/*.{ts,tsx,mts,cts,js}'],
-    ignores: ['./src/plugins/*/*.ts', './scripts/multisrc/*/template.ts'],
+    ignores: ['./plugins/*/*.ts', './plugins/multisrc/*/template.ts'],
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
@@ -159,6 +175,17 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/ban-ts-comment': 'off',
       'no-undef': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/fetch*'],
+              message: 'Use @libs/fetch instead of @/lib/fetch',
+            },
+          ],
+        },
+      ],
     },
     languageOptions: {
       globals: {
