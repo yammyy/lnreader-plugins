@@ -3,7 +3,6 @@ import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { defaultCover } from '@libs/defaultCover';
 import { NovelStatus } from '@libs/novelStatus';
-import { DebugMessages, DefaultNovelParams } from '@/types/constants';
 
 class aerialrainPlugin implements Plugin.PluginBase {
   id = 'aerialrain';
@@ -16,21 +15,17 @@ class aerialrainPlugin implements Plugin.PluginBase {
     if (pageNo > 1) return []; // Site has onle home page for novels
 
     const url = this.site;
-    console.log(DebugMessages.FetchHomepage, url);
+    console.log('Fetching ', url);
 
     const res = await fetchApi(url);
     if (!res.ok) {
-      console.error(DebugMessages.FailedHomepage, res.status);
       throw new Error(`Failed to fetch ${this.site} : ${res.status}`);
     }
-    console.log(DebugMessages.SuccessHomepage);
 
     const $ = parseHTML(await res.text());
-    console.log(DebugMessages.SuccessLoaded);
 
     const novels: Plugin.NovelItem[] = [];
 
-    console.log(DebugMessages.StartParsing);
     // Iterate through all divs with class "cat-card"
     $('div.cat-card').each((_i, cardEl) => {
       const $card = $(cardEl);
@@ -50,29 +45,25 @@ class aerialrainPlugin implements Plugin.PluginBase {
       const title = $a.text().trim();
       const path = makeAbsolute($a.attr('href'), this.site);
 
-      console.log(DebugMessages.InProgressParsing, `${title} (${path})`);
       novels.push({
-        name: title || DefaultNovelParams.defaultTitle,
-        path: path || DefaultNovelParams.defaultPath,
+        name: title || 'Untitled',
+        path: path || '',
         cover: cover || defaultCover,
       });
     });
-    console.log(DebugMessages.EndParsing);
 
     return novels;
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    console.log(DebugMessages.StartNovel, novelPath);
+    console.log(novelPath);
     const res = await fetchApi(novelPath);
     if (!res.ok) {
-      console.log(DebugMessages.FailedNovelPage, res.status);
+      console.log(res.status);
       throw new Error('Failed to load novel page: ' + res.status);
     }
-    console.log(DebugMessages.SuccessNovelPage);
 
     const $ = parseHTML(await res.text());
-    console.log(DebugMessages.SuccessLoadedNovelPage);
 
     // --- Title. Part1 ---
     const mainTitle = $('h1.entry-title').first().text().trim() || '';
@@ -217,7 +208,7 @@ class aerialrainPlugin implements Plugin.PluginBase {
       });
     });
 
-    console.log(DebugMessages.TotalChapters, chapters.length);
+    console.log('Total chapters', chapters.length);
 
     // =========================
     // 6) RETURN RESULT
