@@ -10,7 +10,7 @@ class KakuyomuPlugin implements Plugin.PluginBase {
   name = 'kakuyomu';
   icon = 'src/jp/kakuyomu/icon.png';
   site = 'https://kakuyomu.jp';
-  version = '1.0.0';
+  version = '2.0.0';
   filters = {
     genre: {
       type: FilterTypes.Picker,

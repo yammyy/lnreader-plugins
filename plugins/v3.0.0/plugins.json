@@ -320,7 +320,7 @@
 		"name": "kakuyomu",
 		"site": "https://kakuyomu.jp",
 		"lang": "日本語",
-		"version": "1.0.0",
+		"version": "2.0.0",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/kakuyomu.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/kakuyomu/icon.png"
 	},
