@@ -70,5 +70,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "clownandco",
+    "sourceSite": "https://clownandco.org/",
+    "sourceName": "Clown & Co.",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]

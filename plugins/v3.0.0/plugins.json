@@ -153,6 +153,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/brightnovels/favicon.png"
 	},
 	{
+		"id": "clownandco",
+		"name": "Clown & Co.",
+		"site": "https://clownandco.org/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/ClownCo[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/clownandco/icon.png"
+	},
+	{
 		"id": "FancyTL",
 		"name": "FancyTL",
 		"site": "https://api.mystorywave.com/story-wave-backend/api/v1/",
