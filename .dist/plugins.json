@@ -334,6 +334,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/kakuyomu/icon.png"
 	},
 	{
+		"id": "novel18.syosetu",
+		"name": "Novel18 Syosetu",
+		"site": "https://novel18.syosetu.com/",
+		"lang": "日本語",
+		"version": "1.0.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/Syosetu18.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/icon.png"
+	},
+	{
 		"id": "yomou.syosetu",
 		"name": "Syosetu",
 		"site": "https://yomou.syosetu.com/",
