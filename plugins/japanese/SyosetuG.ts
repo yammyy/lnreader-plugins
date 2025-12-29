@@ -2,23 +2,42 @@ import { load as loadCheerio } from 'cheerio';
 import { fetchApi } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { defaultCover } from '@libs/defaultCover';
-import { Filters } from '@libs/filterInputs';
 import { NovelStatus } from '@libs/novelStatus';
 
-class Novel18Syosetu implements Plugin.PluginBase {
-  id = 'novel18.syosetu';
-  name = 'Novel18 Syosetu';
-  icon = 'src/jp/syosetu/icon.png'; // reuse or change if needed
-  site = 'https://novel18.syosetu.com/';
-  novelPrefix = 'https://novel18.syosetu.com';
-  version = '1.0.0';
+class syosetuGOREPlugin implements Plugin.PluginBase {
+  id = 'syosetuGORE';
+  name = 'Syosetu 18+ (ミッドナイトノベルズ)';
+  icon = 'src/jp/syosetu/iconG.png'; // reuse or change if needed
+  site = 'https://mid.syosetu.com/';
+  novelPrefix = 'https://novel18.syosetu.com/';
+  popularPrefix = 'https://mid.syosetu.com/';
+  searchPrefix = 'https://mid.syosetu.com/search/';
+  version = '1.0.1';
   headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   };
 
+  // Parse Japanese date string "2025年 12月25日 18時28分" to "YYYY-MM-DD"
+  parseJapaneseDate(dateStr: string): string {
+    // Remove time part if present
+    const datePart = dateStr.split(' ')[0]; // "2025年 12月25日"
+
+    // Extract year, month, day using regex
+    const match = datePart.match(/(\d{4})年\s*(\d{1,2})月(\d{1,2})日/);
+
+    if (!match) return ''; // invalid format
+
+    const year = match[1].padStart(4, '0');
+    const month = match[2].padStart(2, '0');
+    const day = match[3].padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   async popularNovels(pageNo: number): Promise<Plugin.NovelItem[]> {
-    const url = `https://mnlt.syosetu.com/rank/top/?p=${pageNo}`;
+    if (pageNo > 1) return []; // only one page available
+    const url = `${this.popularPrefix}rank/list/type/daily_total/`;
     const html = await (await fetchApi(url, { headers: this.headers })).text();
     const $ = loadCheerio(html);
 
@@ -30,7 +49,7 @@ class Novel18Syosetu implements Plugin.PluginBase {
       if (href && name) {
         novels.push({
           name,
-          path: href.replace('/top/', ''), // e.g. /n2096el/ -> n2096el/
+          path: href, //Полная ссылка
           cover: defaultCover,
         });
       }
@@ -39,109 +58,194 @@ class Novel18Syosetu implements Plugin.PluginBase {
   }
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
-    const url = this.novelPrefix + novelPath;
-    const html = await (await fetchApi(url, { headers: this.headers })).text();
-    const $ = loadCheerio(html);
+    const novelIndex = novelPath.replace(this.novelPrefix, '');
+    //https://novel18.syosetu.com/n9622ln/ -> n9622ln/
+    const infoURL = `${this.novelPrefix}novelview/infotop/ncode/${novelIndex}`;
+    const infoHTML = await (
+      await fetchApi(infoURL, { headers: this.headers })
+    ).text();
+    const info$ = loadCheerio(infoHTML);
 
     let status = 'Unknown';
-    if ($('.novel_status').text().includes('連載中'))
-      status = NovelStatus.Ongoing;
-    if ($('.novel_status').text().includes('完結済'))
+    status = NovelStatus.Unknown;
+
+    let title = info$('h1.p-infotop-title a').text().trim();
+    let chapters: Plugin.ChapterItem[] = [];
+
+    const typeSpan = info$('.p-infotop-type__type');
+
+    //Check if this is oneshot (novel with single chapter)
+    if (typeSpan.hasClass('p-infotop-type__type--short')) {
       status = NovelStatus.Completed;
+      //There is only one chapter
+      chapters.push({
+        name: 'Oneshot',
+        path: novelPath,
+      });
+    } else {
+      //It is multi-chapter novel
+      if (typeSpan.hasClass('p-infotop-type__type--serialized')) {
+        status = NovelStatus.Ongoing;
+      } else if (typeSpan.hasClass('p-infotop-type__type--completed')) {
+        status = NovelStatus.Completed;
+      } else status = NovelStatus.Unknown;
+
+      //Get chapters list
+      const url = makeAbsolute(novelPath, this.novelPrefix) || novelPath;
+      const html = await (
+        await fetchApi(url, { headers: this.headers })
+      ).text();
+      const $ = loadCheerio(html);
+
+      let currentPart: string | null = null;
+
+      $('.p-eplist > *').each((_, el) => {
+        const elem = $(el);
+        // Detect part/chapter title
+        if (elem.hasClass('p-eplist__chapter-title')) {
+          currentPart = elem.text().trim();
+        }
+        // Detect individual chapter
+        if (elem.hasClass('p-eplist__sublist')) {
+          const a = elem.find('a.p-eplist__subtitle');
+          const href = a.attr('href');
+          let name = a.text().trim();
+          if (currentPart) {
+            name = `${currentPart} - ${name}`; // or just name if no prefix wanted
+          }
+          // Get date
+          const updateDiv = elem.find('.p-eplist__update');
+          let dateStr = updateDiv
+            .clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim(); // remove span, get text node
+          dateStr = dateStr.split(' ')[0]; // YYYY/MM/DD
+          // Check for revision span
+          const revSpan = updateDiv.find('span[title]');
+          if (revSpan.length) {
+            const title = revSpan.attr('title') || '';
+            const match = title.match(/(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2})/);
+            if (match) {
+              dateStr = match[1].split(' ')[0];
+            }
+          }
+          const releaseTime = dateStr.replace(/\//g, '-');
+
+          chapters.push({
+            name,
+            path: href || '',
+            releaseTime,
+          });
+        }
+      });
+    }
+
+    let summary = '';
+    let author = '';
+    let releaseTime = undefined;
+
+    info$('.p-infotop-data dt').each((i, dt) => {
+      const title = info$(dt).text().trim(); // e.g. "Краткое содержание"
+      const valueEl = info$(dt).next('dd'); // corresponding <dd>
+      let value = valueEl.text().trim(); // base text
+
+      // Clean extra notes like "*Требуется вход в систему"
+      value = value.replace(/\*.*$/g, '').trim();
+
+      // Special handling
+      if (title.includes('あらすじ')) {
+        //Краткое содержание
+        summary =
+          valueEl
+            .html() // keep <br> for lines
+            ?.replace(/<br>/gi, '\n') // or keep as is
+            .trim() || '';
+      } else if (title.includes('作者名')) {
+        //Имя автора
+        author = valueEl.find('a').text().trim() || value;
+      } else if (title.includes('掲載日')) {
+        releaseTime = this.parseJapaneseDate(value); //This would be used only for oneshot novels
+      }
+    });
 
     const novel: Plugin.SourceNovel = {
       path: novelPath,
-      name: $('.novel_title').text().trim(),
-      author:
-        $('.novel_writername a').text().trim() ||
-        $('.novel_writername').text().replace('作者：', '').trim(),
+      name: title,
+      author,
       status,
       cover: defaultCover,
-      summary: $('#novel_ex').text().trim() || undefined,
-      genres: $('meta[name="keywords"]').attr('content') || '',
-      chapters: [],
+      summary,
+      genres: '',
+      chapters,
     };
 
-    const chapters: Plugin.ChapterItem[] = [];
-    $('.chapter_title').each((i, e) => {
-      const part = $(e).text().trim();
-      if (part) {
-        chapters.push({
-          name: `Part ${i + 1}: ${part}`,
-          path: novelPath,
-        });
-      }
-    });
-
-    $('.index_box .novel_sublist2').each((_, e) => {
-      const a = $(e).find('a');
-      const href = a.attr('href');
-      const title = a.text().trim();
-      const date = $(e)
-        .find('.long_update')
-        .text()
-        .trim()
-        .split(' ')[0]
-        .replace(/\//g, '-');
-      if (href && title) {
-        chapters.push({
-          name: title,
-          path: href.replace(this.novelPrefix, ''),
-          releaseTime: date || undefined,
-        });
-      }
-    });
-
-    novel.chapters = chapters;
     return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
-    const url = this.novelPrefix + chapterPath;
+    const url = makeAbsolute(chapterPath, this.novelPrefix) || chapterPath;
     const html = await (await fetchApi(url, { headers: this.headers })).text();
     const $ = loadCheerio(html);
 
-    const title = $('.novel_subtitle').text().trim();
-    const content = $('#novel_honbun').html() || '';
+    const title = $('h1.p-novel__title').text().trim();
+    // Remove outer wrappers
+    const contentHTML = $('.js-novel-text.p-novel__text').html() || '';
+    // Process each <p>: remove id and other attributes, handle <br>
+    const cleanedPs = $('p', contentHTML)
+      .map((_, p) => {
+        const text = $(p).text().trim();
+        if (!text) return '<br>'; // empty p with br → line break
+        return `<p>${text}</p>`;
+      })
+      .get()
+      .join('\n');
 
-    const rawHtml = `<h1>${title}</h1><br>${content}`;
-    // Remove translation if not needed, or keep your translate function
-    // For now return raw (site is Japanese, but plugin originally translated)
-    return rawHtml.trim();
+    const content = cleanedPs.trim();
+
+    let rawHtml = '<h1>' + title + '</h1>' + '🐼<br>' + content;
+    let chapterText = '';
+
+    if (rawHtml.trim()) {
+      chapterText = await translateHtmlByLinePlain(rawHtml, 'ru');
+    } else {
+      chapterText = ''; // or keep as is, no translation
+    }
+
+    return chapterText.trim();
   }
 
+  // Updated searchNovels for novel18.syosetu.com
   async searchNovels(
     searchTerm: string,
     pageNo?: number,
   ): Promise<Plugin.NovelItem[]> {
-    const url = `https://nl.syosetu.com/syuppan/list/?word=${encodeURIComponent(searchTerm)}&p=${pageNo || 1}`;
+    const url = `${this.searchPrefix}search/?word=${encodeURIComponent(searchTerm)}&p=${pageNo || 1}`;
     const html = await (await fetchApi(url, { headers: this.headers })).text();
     const $ = loadCheerio(html);
 
     const novels: Plugin.NovelItem[] = [];
-    $('.search_result_title a').each((_, e) => {
-      const a = $(e);
+
+    $('.searchkekka_box').each((_, box) => {
+      const a = $(box).find('.novel_h a.tl').first();
       const href = a.attr('href');
       const name = a.text().trim();
+
       if (href && name) {
         novels.push({
           name,
-          path: href.replace('/syuppan/view/', '').replace('/', ''),
+          path: href,
           cover: defaultCover,
         });
       }
     });
+
     return novels;
   }
-
-  resolveUrl(path: string): string {
-    return this.novelPrefix + path;
-  }
-
-  filters = {} satisfies Filters; // no filters for this site yet
 }
-
-export default new Novel18Syosetu();
+export default new syosetuGOREPlugin();
 
 //DON'T CHANGE IT HERE!
 

@@ -334,13 +334,31 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/kakuyomu/icon.png"
 	},
 	{
-		"id": "novel18.syosetu",
-		"name": "Novel18 Syosetu",
-		"site": "https://novel18.syosetu.com/",
+		"id": "syosetuGORE",
+		"name": "Syosetu 18+ (ミッドナイトノベルズ)",
+		"site": "https://mid.syosetu.com/",
 		"lang": "日本語",
-		"version": "1.0.0",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/Syosetu18.js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/icon.png"
+		"version": "1.0.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/SyosetuG.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/iconG.png"
+	},
+	{
+		"id": "syosetuMEN18",
+		"name": "Syosetu 18+ ♂ (ノクターンノベルズ)",
+		"site": "https://noc.syosetu.com/",
+		"lang": "日本語",
+		"version": "1.0.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/SyosetuM.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/iconM.png"
+	},
+	{
+		"id": "syosetuWOMEN18",
+		"name": "Syosetu 18+ ♀ (ムーンライトノベルズ)",
+		"site": "https://mnlt.syosetu.com/",
+		"lang": "日本語",
+		"version": "1.0.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/SyosetuW.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/iconW.png"
 	},
 	{
 		"id": "yomou.syosetu",

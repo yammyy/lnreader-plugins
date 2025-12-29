@@ -23,6 +23,8 @@ var ShanghaiFantasy_1 = __importDefault(require("@plugins/english/ShanghaiFantas
 var snoutandco_1 = __importDefault(require("@plugins/english/snoutandco"));
 var transcendentaltls_1 = __importDefault(require("@plugins/english/transcendentaltls"));
 var novelshub_1 = __importDefault(require("@plugins/english/novelshub"));
+var betwixtedbutterfly_1 = __importDefault(require("@plugins/english/betwixtedbutterfly"));
+var wuxiaworldeu_1 = __importDefault(require("@plugins/english/wuxiaworldeu"));
 var _52shuku_1 = __importDefault(require("@plugins/chinese/52shuku"));
 var _69xinshu_1 = __importDefault(require("@plugins/chinese/69xinshu"));
 var ab9a1c1018b5_5df7ec_cdf_1 = __importDefault(require("@plugins/chinese/ab9a1c1018b5.5df7ec.cdf"));
@@ -39,6 +41,10 @@ var MoonlightTeatime_madara_1 = __importDefault(require("@plugins/english/Moonli
 var NovelBike_madara_1 = __importDefault(require("@plugins/english/NovelBike[madara]"));
 var StoriesEcho_madara_1 = __importDefault(require("@plugins/english/StoriesEcho[madara]"));
 var WordRain_madara_1 = __importDefault(require("@plugins/english/WordRain[madara]"));
+var ClownCo_madara_1 = __importDefault(require("@plugins/english/ClownCo[madara]"));
+var SyosetuW_1 = __importDefault(require("@plugins/japanese/SyosetuW"));
+var SyosetuM_1 = __importDefault(require("@plugins/japanese/SyosetuM"));
+var SyosetuG_1 = __importDefault(require("@plugins/japanese/SyosetuG"));
 var PLUGINS = [
     _69shu_1.default,
     Quanben_1.default,
@@ -60,6 +66,8 @@ var PLUGINS = [
     snoutandco_1.default,
     transcendentaltls_1.default,
     novelshub_1.default,
+    betwixtedbutterfly_1.default,
+    wuxiaworldeu_1.default,
     _52shuku_1.default,
     _69xinshu_1.default,
     ab9a1c1018b5_5df7ec_cdf_1.default,
@@ -76,5 +84,9 @@ var PLUGINS = [
     NovelBike_madara_1.default,
     StoriesEcho_madara_1.default,
     WordRain_madara_1.default,
+    ClownCo_madara_1.default,
+    SyosetuW_1.default,
+    SyosetuM_1.default,
+    SyosetuG_1.default,
 ];
 exports.default = PLUGINS;

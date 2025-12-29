@@ -19,6 +19,8 @@ import p_10010 from '@plugins/english/ShanghaiFantasy';
 import p_10011 from '@plugins/english/snoutandco';
 import p_10012 from '@plugins/english/transcendentaltls';
 import p_10013 from '@plugins/english/novelshub';
+import p_10014 from '@plugins/english/betwixtedbutterfly';
+import p_10015 from '@plugins/english/wuxiaworldeu';
 import p_20001 from '@plugins/chinese/52shuku';
 import p_20002 from '@plugins/chinese/69xinshu';
 import p_20003 from '@plugins/chinese/ab9a1c1018b5.5df7ec.cdf';
@@ -35,6 +37,10 @@ import p_30005 from '@plugins/english/MoonlightTeatime[madara]';
 import p_30006 from '@plugins/english/NovelBike[madara]';
 import p_30007 from '@plugins/english/StoriesEcho[madara]';
 import p_30008 from '@plugins/english/WordRain[madara]';
+import p_30009 from '@plugins/english/ClownCo[madara]';
+import p_40001 from '@plugins/japanese/SyosetuW';
+import p_40002 from '@plugins/japanese/SyosetuM';
+import p_40003 from '@plugins/japanese/SyosetuG';
 
 const PLUGINS: Plugin.PluginBase[] = [
   p_12,
@@ -57,6 +63,8 @@ const PLUGINS: Plugin.PluginBase[] = [
   p_10011,
   p_10012,
   p_10013,
+  p_10014,
+  p_10015,
   p_20001,
   p_20002,
   p_20003,
@@ -73,5 +81,9 @@ const PLUGINS: Plugin.PluginBase[] = [
   p_30006,
   p_30007,
   p_30008,
+  p_30009,
+  p_40001,
+  p_40002,
+  p_40003,
 ];
 export default PLUGINS;
