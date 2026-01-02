@@ -347,7 +347,7 @@
 		"name": "Syosetu 18+ (ミッドナイトノベルズ)",
 		"site": "https://mid.syosetu.com/",
 		"lang": "日本語",
-		"version": "1.0.1",
+		"version": "2.0.1",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/SyosetuG.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/iconG.png"
 	},
@@ -356,7 +356,7 @@
 		"name": "Syosetu 18+ ♂ (ノクターンノベルズ)",
 		"site": "https://noc.syosetu.com/",
 		"lang": "日本語",
-		"version": "1.0.1",
+		"version": "2.0.1",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/SyosetuM.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/iconM.png"
 	},
@@ -365,7 +365,7 @@
 		"name": "Syosetu 18+ ♀ (ムーンライトノベルズ)",
 		"site": "https://mnlt.syosetu.com/",
 		"lang": "日本語",
-		"version": "1.0.1",
+		"version": "2.0.1",
 		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/japanese/SyosetuW.js",
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/jp/syosetu/iconW.png"
 	},

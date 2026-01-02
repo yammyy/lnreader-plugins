@@ -12,7 +12,7 @@ class syosetuGOREPlugin implements Plugin.PluginBase {
   novelPrefix = 'https://novel18.syosetu.com/';
   popularPrefix = 'https://mid.syosetu.com/';
   searchPrefix = 'https://mid.syosetu.com/search/';
-  version = '1.0.1';
+  version = '2.0.1';
   headers = {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -191,19 +191,26 @@ class syosetuGOREPlugin implements Plugin.PluginBase {
     const $ = loadCheerio(html);
 
     const title = $('h1.p-novel__title').text().trim();
-    // Remove outer wrappers
-    const contentHTML = $('.js-novel-text.p-novel__text').html() || '';
-    // Process each <p>: remove id and other attributes, handle <br>
-    const cleanedPs = $('p', contentHTML)
-      .map((_, p) => {
-        const text = $(p).text().trim();
-        if (!text) return '<br>'; // empty p with br → line break
-        return `<p>${text}</p>`;
-      })
-      .get()
-      .join('\n');
 
-    const content = cleanedPs.trim();
+    // Clean all chapter text blocks
+    let cleanedLines: string[] = [];
+    $('.js-novel-text.p-novel__text').each((_, block) => {
+      const blockHtml = $(block).html() || '';
+
+      // Parse block safely
+      const $block = loadCheerio(`<div>${blockHtml}</div>`);
+
+      $block('p').each((_, p) => {
+        const text = $(p).text().trim();
+        if (text) {
+          cleanedLines.push(`<p>${text}</p>`);
+        } else {
+          cleanedLines.push('<br>');
+        }
+      });
+    });
+
+    const content = cleanedLines.join('\n').trim();
 
     let rawHtml = '<h1>' + title + '</h1>' + '🐼<br>' + content;
     let chapterText = '';

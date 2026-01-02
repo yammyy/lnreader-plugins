@@ -42,7 +42,7 @@ var NovelBike_madara_1 = __importDefault(require("@plugins/english/NovelBike[mad
 var StoriesEcho_madara_1 = __importDefault(require("@plugins/english/StoriesEcho[madara]"));
 var WordRain_madara_1 = __importDefault(require("@plugins/english/WordRain[madara]"));
 var ClownCo_madara_1 = __importDefault(require("@plugins/english/ClownCo[madara]"));
-var bellerepository_madara_1 = __importDefault(require("@plugins/english/bellerepository[madara]"));
+var BelleRepository_madara_1 = __importDefault(require("@plugins/english/BelleRepository[madara]"));
 var SyosetuW_1 = __importDefault(require("@plugins/japanese/SyosetuW"));
 var SyosetuM_1 = __importDefault(require("@plugins/japanese/SyosetuM"));
 var SyosetuG_1 = __importDefault(require("@plugins/japanese/SyosetuG"));
@@ -86,7 +86,7 @@ var PLUGINS = [
     StoriesEcho_madara_1.default,
     WordRain_madara_1.default,
     ClownCo_madara_1.default,
-    bellerepository_madara_1.default,
+    BelleRepository_madara_1.default,
     SyosetuW_1.default,
     SyosetuM_1.default,
     SyosetuG_1.default,
