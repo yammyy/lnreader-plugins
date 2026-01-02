@@ -9,7 +9,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
   id = 'ShanghaiFantasy';
   name = 'Shanghai Fantasy';
   site = 'https://shanghaifantasy.com/';
-  version = '12.0.0';
+  version = '13.0.0';
   icon = 'src/en/shanghaifantasy/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -341,14 +341,17 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
     --------------------------------------------------------- */
     let id = $("input[name='comment_post_ID']").attr('value');
 
+    // Fallback using Cheerio only (no DOMParser)
     if (!id) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const link = doc.querySelector(
-        'link[rel="alternate"][type="application/json"][href*="/wp/v2/posts/"]',
-      );
-      const href = link?.getAttribute('href') || '';
-      const match = href.match(/\/posts\/(\d+)$/);
+      const link = $('link[rel="alternate"][type="application/json"]')
+        .filter((i, el) => {
+          const href = $(el).attr('href') || '';
+          return href.includes('/wp/v2/posts/');
+        })
+        .first();
+
+      const href = link.attr('href') || '';
+      const match = href.match(/\/posts\/(\d+)(?:\?.*)?$/);
       id = match ? match[1] : '';
 
       if (!id) throw new Error('Failed to extract chapter ID');
