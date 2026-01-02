@@ -126,6 +126,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/azurechronicles/icon.png"
 	},
 	{
+		"id": "bellerepository",
+		"name": "Belle Repository",
+		"site": "https://bellerepository.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/BelleRepository[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/bellerepository/icon.png"
+	},
+	{
 		"id": "betwixtedbutterfly",
 		"name": "Betwixted Translations",
 		"site": "https://betwixtedbutterfly.com/translations/",

@@ -79,5 +79,14 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
+  },
+  {
+    "id": "bellerepository",
+    "sourceSite": "https://bellerepository.com/",
+    "sourceName": "Belle Repository",
+    "options": {
+      "lang": "English",
+      "useNewChapterEndpoint": true
+    }
   }
 ]
