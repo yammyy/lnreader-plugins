@@ -9,7 +9,7 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
   id = 'ShanghaiFantasy';
   name = 'Shanghai Fantasy';
   site = 'https://shanghaifantasy.com/';
-  version = '11.0.0';
+  version = '12.0.0';
   icon = 'src/en/shanghaifantasy/favicon.png';
 
   hideLocked = storage.get('hideLocked');
@@ -339,10 +339,19 @@ class ShanghaiFantasyPlugin implements Plugin.PluginBase {
        STEP 2: Extract chapter ID from hidden input
        Example: <input type="hidden" name="comment_post_ID" value="1284828">
     --------------------------------------------------------- */
-    const id = $("input[name='comment_post_ID']").attr('value');
+    let id = $("input[name='comment_post_ID']").attr('value');
 
     if (!id) {
-      throw new Error('Failed to extract chapter ID from page');
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const link = doc.querySelector(
+        'link[rel="alternate"][type="application/json"][href*="/wp/v2/posts/"]',
+      );
+      const href = link?.getAttribute('href') || '';
+      const match = href.match(/\/posts\/(\d+)$/);
+      id = match ? match[1] : '';
+
+      if (!id) throw new Error('Failed to extract chapter ID');
     }
 
     const chapterApiUrl = `https://shanghaifantasy.com/wp-json/wp/v2/posts/${id}`;
