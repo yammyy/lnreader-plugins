@@ -6,7 +6,7 @@ import { NovelStatus } from '@libs/novelStatus';
 import { storage } from '@libs/storage';
 
 class DragonholicTranslationsPlugin implements Plugin.PluginBase {
-  id = 'dragonholic';
+  id = 'dragonholictranslations';
   name = 'Dragonholic Translations';
   site = 'https://dragonholictranslations.com/';
   apisite = this.site + 'wp-json/wp/v2/';
