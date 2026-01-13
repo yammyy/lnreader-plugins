@@ -21,6 +21,7 @@ import p_10012 from '@plugins/english/transcendentaltls';
 import p_10013 from '@plugins/english/novelshub';
 import p_10014 from '@plugins/english/betwixtedbutterfly';
 import p_10015 from '@plugins/english/wuxiaworldeu';
+import p_10016 from '@plugins/english/dragonholictranslations';
 import p_20001 from '@plugins/chinese/52shuku';
 import p_20002 from '@plugins/chinese/69xinshu';
 import p_20003 from '@plugins/chinese/ab9a1c1018b5.5df7ec.cdf';
@@ -66,6 +67,7 @@ const PLUGINS: Plugin.PluginBase[] = [
   p_10013,
   p_10014,
   p_10015,
+  p_10016,
   p_20001,
   p_20002,
   p_20003,

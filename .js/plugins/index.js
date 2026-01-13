@@ -25,6 +25,7 @@ var transcendentaltls_1 = __importDefault(require("@plugins/english/transcendent
 var novelshub_1 = __importDefault(require("@plugins/english/novelshub"));
 var betwixtedbutterfly_1 = __importDefault(require("@plugins/english/betwixtedbutterfly"));
 var wuxiaworldeu_1 = __importDefault(require("@plugins/english/wuxiaworldeu"));
+var dragonholictranslations_1 = __importDefault(require("@plugins/english/dragonholictranslations"));
 var _52shuku_1 = __importDefault(require("@plugins/chinese/52shuku"));
 var _69xinshu_1 = __importDefault(require("@plugins/chinese/69xinshu"));
 var ab9a1c1018b5_5df7ec_cdf_1 = __importDefault(require("@plugins/chinese/ab9a1c1018b5.5df7ec.cdf"));
@@ -69,6 +70,7 @@ var PLUGINS = [
     novelshub_1.default,
     betwixtedbutterfly_1.default,
     wuxiaworldeu_1.default,
+    dragonholictranslations_1.default,
     _52shuku_1.default,
     _69xinshu_1.default,
     ab9a1c1018b5_5df7ec_cdf_1.default,

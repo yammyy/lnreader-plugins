@@ -171,6 +171,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/clownandco/icon.png"
 	},
 	{
+		"id": "dragonholic",
+		"name": "Dragonholic Translations",
+		"site": "https://dragonholictranslations.com/",
+		"lang": "English",
+		"version": "1.1.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/dragonholictranslations.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/dragonholic/favicon.png"
+	},
+	{
 		"id": "FancyTL",
 		"name": "FancyTL",
 		"site": "https://api.mystorywave.com/story-wave-backend/api/v1/",
