@@ -59,119 +59,119 @@ class syosetuWOMEN18Plugin implements Plugin.PluginBase {
 
   async parseNovel(novelPath: string): Promise<Plugin.SourceNovel> {
     const novelIndex = novelPath.replace(this.novelPrefix, '');
-    //https://novel18.syosetu.com/n9622ln/ -> n9622ln/
     const infoURL = `${this.novelPrefix}novelview/infotop/ncode/${novelIndex}`;
     const infoHTML = await (
       await fetchApi(infoURL, { headers: this.headers })
     ).text();
     const info$ = loadCheerio(infoHTML);
 
-    let status = 'Unknown';
-    status = NovelStatus.Unknown;
-
+    let status = NovelStatus.Unknown;
     let title = info$('h1.p-infotop-title a').text().trim();
     let chapters: Plugin.ChapterItem[] = [];
 
     const typeSpan = info$('.p-infotop-type__type');
 
-    //Check if this is oneshot (novel with single chapter)
+    // ─── oneshot ────────────────────────────────
     if (typeSpan.hasClass('p-infotop-type__type--short')) {
       status = NovelStatus.Completed;
-      //There is only one chapter
-      chapters.push({
-        name: 'Oneshot',
-        path: novelPath,
-      });
-    } else {
-      //It is multi-chapter novel
+      chapters.push({ name: 'Oneshot', path: novelPath });
+    }
+    // ─── multi-chapter ──────────────────────────
+    else {
       if (typeSpan.hasClass('p-infotop-type__type--serialized')) {
         status = NovelStatus.Ongoing;
       } else if (typeSpan.hasClass('p-infotop-type__type--completed')) {
         status = NovelStatus.Completed;
-      } else status = NovelStatus.Unknown;
+      }
 
-      //Get chapters list
-      const url = makeAbsolute(novelPath, this.novelPrefix) || novelPath;
-      const html = await (
-        await fetchApi(url, { headers: this.headers })
-      ).text();
-      const $ = loadCheerio(html);
+      // Собираем главы со всех страниц
+      let page = 1;
+      let hasNext = true;
 
-      let currentPart: string | null = null;
+      while (hasNext) {
+        const url =
+          page === 1
+            ? makeAbsolute(novelPath, this.novelPrefix) || novelPath
+            : `${novelPath}?p=${page}`;
 
-      $('.p-eplist > *').each((_, el) => {
-        const elem = $(el);
-        // Detect part/chapter title
-        if (elem.hasClass('p-eplist__chapter-title')) {
-          currentPart = elem.text().trim();
-        }
-        // Detect individual chapter
-        if (elem.hasClass('p-eplist__sublist')) {
-          const a = elem.find('a.p-eplist__subtitle');
-          const href = a.attr('href');
-          let name = a.text().trim();
-          if (currentPart) {
-            name = `${currentPart} - ${name}`; // or just name if no prefix wanted
+        const html = await (
+          await fetchApi(url, { headers: this.headers })
+        ).text();
+        const $ = loadCheerio(html);
+
+        let currentPart: string | null = null;
+
+        $('.p-eplist > *').each((_, el) => {
+          const elem = $(el);
+
+          if (elem.hasClass('p-eplist__chapter-title')) {
+            currentPart = elem.text().trim();
+            return;
           }
-          // Get date
-          const updateDiv = elem.find('.p-eplist__update');
-          let dateStr = updateDiv
-            .clone()
-            .children()
-            .remove()
-            .end()
-            .text()
-            .trim(); // remove span, get text node
-          dateStr = dateStr.split(' ')[0]; // YYYY/MM/DD
-          // Check for revision span
-          const revSpan = updateDiv.find('span[title]');
-          if (revSpan.length) {
-            const title = revSpan.attr('title') || '';
-            const match = title.match(/(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2})/);
-            if (match) {
-              dateStr = match[1].split(' ')[0];
+
+          if (elem.hasClass('p-eplist__sublist')) {
+            const a = elem.find('a.p-eplist__subtitle');
+            const href = a.attr('href') || '';
+            let name = a.text().trim();
+
+            if (currentPart) name = `${currentPart} - ${name}`;
+
+            const updateDiv = elem.find('.p-eplist__update');
+            let dateStr = updateDiv
+              .clone()
+              .children()
+              .remove()
+              .end()
+              .text()
+              .trim();
+            dateStr = dateStr.split(' ')[0]; // YYYY/MM/DD
+
+            const revSpan = updateDiv.find('span[title]');
+            if (revSpan.length) {
+              const title = revSpan.attr('title') || '';
+              const match = title.match(/(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2})/);
+              if (match) dateStr = match[1].split(' ')[0];
             }
-          }
-          const releaseTime = dateStr.replace(/\//g, '-');
 
-          chapters.push({
-            name,
-            path: href || '',
-            releaseTime,
-          });
+            const releaseTime = dateStr.replace(/\//g, '-');
+
+            chapters.push({ name, path: href, releaseTime });
+          }
+        });
+
+        // Проверяем наличие следующей страницы
+        const nextItem = $('.c-pager__item--next');
+        if (nextItem.length === 0) {
+          hasNext = false;
+        } else if (nextItem.is('span')) {
+          hasNext = false;
+        } else {
+          // <a> → идём дальше
+          page++;
         }
-      });
+      }
     }
 
+    // ─── метаданные ─────────────────────────────
     let summary = '';
     let author = '';
-    let releaseTime = undefined;
+    let releaseTime: string | undefined;
 
-    info$('.p-infotop-data dt').each((i, dt) => {
-      const title = info$(dt).text().trim(); // e.g. "Краткое содержание"
-      const valueEl = info$(dt).next('dd'); // corresponding <dd>
-      let value = valueEl.text().trim(); // base text
+    info$('.p-infotop-data dt').each((_, dt) => {
+      const title = info$(dt).text().trim();
+      const dd = info$(dt).next('dd');
+      let value = dd.text().trim().replace(/\*.*$/g, '').trim();
 
-      // Clean extra notes like "*Требуется вход в систему"
-      value = value.replace(/\*.*$/g, '').trim();
-
-      // Special handling
       if (title.includes('あらすじ')) {
-        //Краткое содержание
-        summary =
-          valueEl
-            .html() // keep <br> for lines
-            ?.replace(/<br>/gi, '\n') // or keep as is
-            .trim() || '';
+        summary = dd.html()?.replace(/<br>/gi, '\n').trim() || '';
       } else if (title.includes('作者名')) {
-        //Имя автора
-        author = valueEl.find('a').text().trim() || value;
+        author = dd.find('a').text().trim() || value;
       } else if (title.includes('掲載日')) {
-        releaseTime = this.parseJapaneseDate(value); //This would be used only for oneshot novels
+        releaseTime = this.parseJapaneseDate(value);
       }
     });
 
-    const novel: Plugin.SourceNovel = {
+    return {
       path: novelPath,
       name: title,
       author,
@@ -181,8 +181,6 @@ class syosetuWOMEN18Plugin implements Plugin.PluginBase {
       genres: '',
       chapters,
     };
-
-    return novel;
   }
 
   async parseChapter(chapterPath: string): Promise<string> {
