@@ -95,7 +95,7 @@
     "sourceName": "B·catNovel",
     "options": {
       "lang": "English",
-      "useNewChapterEndpoint": true
+      "useNewChapterEndpoint": false
     }
   }
 ]
