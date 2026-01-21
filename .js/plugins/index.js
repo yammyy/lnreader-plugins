@@ -45,6 +45,7 @@ var StoriesEcho_madara_1 = __importDefault(require("@plugins/english/StoriesEcho
 var WordRain_madara_1 = __importDefault(require("@plugins/english/WordRain[madara]"));
 var ClownCo_madara_1 = __importDefault(require("@plugins/english/ClownCo[madara]"));
 var BelleRepository_madara_1 = __importDefault(require("@plugins/english/BelleRepository[madara]"));
+var bcatranslation_madara_1 = __importDefault(require("@plugins/english/bcatranslation[madara]"));
 var NovelLib_fictioneer_1 = __importDefault(require("@plugins/english/NovelLib[fictioneer]"));
 var SyosetuW_1 = __importDefault(require("@plugins/japanese/SyosetuW"));
 var SyosetuM_1 = __importDefault(require("@plugins/japanese/SyosetuM"));
@@ -93,6 +94,7 @@ var PLUGINS = [
     ClownCo_madara_1.default,
     BelleRepository_madara_1.default,
     NovelLib_fictioneer_1.default,
+    bcatranslation_madara_1.default,
     SyosetuW_1.default,
     SyosetuM_1.default,
     SyosetuG_1.default,

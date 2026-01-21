@@ -41,6 +41,7 @@ import p_30007 from '@plugins/english/StoriesEcho[madara]';
 import p_30008 from '@plugins/english/WordRain[madara]';
 import p_30009 from '@plugins/english/ClownCo[madara]';
 import p_30010 from '@plugins/english/BelleRepository[madara]';
+import p_30012 from '@plugins/english/BcatNovel[madara]';
 import p_30011 from '@plugins/english/NovelLib[fictioneer]';
 import p_40001 from '@plugins/japanese/SyosetuW';
 import p_40002 from '@plugins/japanese/SyosetuM';
@@ -90,6 +91,7 @@ const PLUGINS: Plugin.PluginBase[] = [
   p_30009,
   p_30010,
   p_30011,
+  p_30012,
   p_40001,
   p_40002,
   p_40003,
