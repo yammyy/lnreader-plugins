@@ -343,6 +343,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/wordrain69/icon.png"
 	},
 	{
+		"id": "wuxiatranslate",
+		"name": "Wuxia Translate",
+		"site": "https://wuxiatranslate.com/",
+		"lang": "English",
+		"version": "1.0.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/wuxiatranslate.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/wuxiatranslate/favicon.png"
+	},
+	{
 		"id": "wuxiaworldEU",
 		"name": "WuxiaWorld EU",
 		"site": "https://wuxiaworld.eu/api/",
