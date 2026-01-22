@@ -88,14 +88,5 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
-  },
-  {
-    "id": "bcatranslation",
-    "sourceSite": "https://bcatranslation.com/",
-    "sourceName": "B·catNovel",
-    "options": {
-      "lang": "English",
-      "useNewChapterEndpoint": false
-    }
   }
 ]

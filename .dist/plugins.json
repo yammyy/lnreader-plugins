@@ -127,12 +127,12 @@
 	},
 	{
 		"id": "bcatranslation",
-		"name": "B·catNovel",
+		"name": "Bcat00 Novel",
 		"site": "https://bcatranslation.com/",
 		"lang": "English",
-		"version": "1.0.8",
-		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/BcatNovel[madara].js",
-		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/bcatranslation/icon.png"
+		"version": "1.0.1",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/BcatNovel.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/bcatranslation/favicon.png"
 	},
 	{
 		"id": "bellerepository",
