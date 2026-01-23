@@ -24,6 +24,7 @@ import p_10015 from '@plugins/english/wuxiaworldeu';
 import p_10016 from '@plugins/english/dragonholictranslations';
 import p_10017 from '@plugins/english/wuxiatranslate';
 import p_10018 from '@plugins/english/akknovel';
+import p_10019 from '@plugins/english/crimsontranslations';
 import p_20001 from '@plugins/chinese/52shuku';
 import p_20002 from '@plugins/chinese/69xinshu';
 import p_20003 from '@plugins/chinese/ab9a1c1018b5.5df7ec.cdf';
@@ -75,6 +76,7 @@ const PLUGINS: Plugin.PluginBase[] = [
   p_10017,
   p_30012,
   p_10018,
+  p_10019,
   p_20001,
   p_20002,
   p_20003,
