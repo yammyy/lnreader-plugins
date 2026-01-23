@@ -8,7 +8,7 @@ class CrimsonTranslationsPlugin implements Plugin.PluginBase {
   name = 'Crimson Translations';
   icon = 'src/en/crimsontranslations/favicon.png';
   site = 'https://www.crimsontranslations.com/';
-  version = '1.0.0';
+  version = '2.0.0';
 
   // Base API prefix used in all requests
   apiBase = `${this.site}api/`;
@@ -103,7 +103,7 @@ class CrimsonTranslationsPlugin implements Plugin.PluginBase {
       path: bookId,
       name:
         details.english_book_name && details.original_book_name
-          ? `${details.english_book_name} (${details.original_book_name})`
+          ? `${details.english_book_name} / ${details.original_book_name}`
           : details.english_book_name ||
             details.original_book_name ||
             'Untitled',
