@@ -45,7 +45,7 @@ import p_30009 from '@plugins/english/ClownCo[madara]';
 import p_30010 from '@plugins/english/BelleRepository[madara]';
 import p_30011 from '@plugins/english/NovelLib[fictioneer]';
 import p_30012 from '@plugins/english/BcatNovel[madara-child]';
-import p_30013 from '@plugins/english/StoriesRealm[madara-child]';
+import p_30013 from '@plugins/english/StoriesRealm[madara]';
 import p_40001 from '@plugins/japanese/SyosetuW';
 import p_40002 from '@plugins/japanese/SyosetuM';
 import p_40003 from '@plugins/japanese/SyosetuG';
