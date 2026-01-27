@@ -88,14 +88,5 @@
       "lang": "English",
       "useNewChapterEndpoint": true
     }
-  },
-  {
-    "id": "storiesrealm",
-    "sourceSite": "https://storiesrealm.com/",
-    "sourceName": "Stories Realm",
-    "options": {
-      "lang": "English",
-      "useNewChapterEndpoint": true
-    }
   }
 ]
