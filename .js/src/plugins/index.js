@@ -49,7 +49,7 @@ var ClownCo_madara_1 = __importDefault(require("@plugins/english/ClownCo[madara]
 var BelleRepository_madara_1 = __importDefault(require("@plugins/english/BelleRepository[madara]"));
 var NovelLib_fictioneer_1 = __importDefault(require("@plugins/english/NovelLib[fictioneer]"));
 var BcatNovel_madara_child_1 = __importDefault(require("@plugins/english/BcatNovel[madara-child]"));
-var StoriesRealm_madara_child_1 = __importDefault(require("@plugins/english/StoriesRealm[madara-child]"));
+var StoriesRealm_madara_1 = __importDefault(require("@plugins/english/StoriesRealm[madara]"));
 var SyosetuW_1 = __importDefault(require("@plugins/japanese/SyosetuW"));
 var SyosetuM_1 = __importDefault(require("@plugins/japanese/SyosetuM"));
 var SyosetuG_1 = __importDefault(require("@plugins/japanese/SyosetuG"));
@@ -100,7 +100,7 @@ var PLUGINS = [
     ClownCo_madara_1.default,
     BelleRepository_madara_1.default,
     NovelLib_fictioneer_1.default,
-    StoriesRealm_madara_child_1.default,
+    StoriesRealm_madara_1.default,
     SyosetuW_1.default,
     SyosetuM_1.default,
     SyosetuG_1.default,

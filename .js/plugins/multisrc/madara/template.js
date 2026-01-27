@@ -205,7 +205,7 @@ var MadaraPlugin = /** @class */ (function () {
     MadaraPlugin.prototype.parseNovels = function (loadedCheerio) {
         var novels = [];
         loadedCheerio('.manga-title-badges').remove();
-        loadedCheerio('.page-item-detail, .c-tabs-item__content').each(function (index, element) {
+        loadedCheerio('.page-item-detail, .c-tabs-item__content, .manga__content_item').each(function (index, element) {
             var novelName = loadedCheerio(element)
                 .find('.post-title')
                 .text()

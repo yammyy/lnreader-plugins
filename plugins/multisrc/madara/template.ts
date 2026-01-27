@@ -130,30 +130,29 @@ class MadaraPlugin implements Plugin.PluginBase {
 
     loadedCheerio('.manga-title-badges').remove();
 
-    loadedCheerio('.page-item-detail, .c-tabs-item__content').each(
-      (index, element) => {
-        const novelName = loadedCheerio(element)
-          .find('.post-title')
-          .text()
-          .trim();
-        const novelUrl =
-          loadedCheerio(element).find('.post-title').find('a').attr('href') ||
-          '';
-        if (!novelName || !novelUrl) return;
-        const image = loadedCheerio(element).find('img');
-        const novelCover =
-          image.attr('data-src') ||
-          image.attr('src') ||
-          image.attr('data-lazy-srcset') ||
-          defaultCover;
-        const novel: Plugin.NovelItem = {
-          name: novelName,
-          cover: novelCover,
-          path: novelUrl.replace(/https?:\/\/.*?\//, '/'),
-        };
-        novels.push(novel);
-      },
-    );
+    loadedCheerio(
+      '.page-item-detail, .c-tabs-item__content, .manga__content_item',
+    ).each((index, element) => {
+      const novelName = loadedCheerio(element)
+        .find('.post-title')
+        .text()
+        .trim();
+      const novelUrl =
+        loadedCheerio(element).find('.post-title').find('a').attr('href') || '';
+      if (!novelName || !novelUrl) return;
+      const image = loadedCheerio(element).find('img');
+      const novelCover =
+        image.attr('data-src') ||
+        image.attr('src') ||
+        image.attr('data-lazy-srcset') ||
+        defaultCover;
+      const novel: Plugin.NovelItem = {
+        name: novelName,
+        cover: novelCover,
+        path: novelUrl.replace(/https?:\/\/.*?\//, '/'),
+      };
+      novels.push(novel);
+    });
 
     return novels;
   }
