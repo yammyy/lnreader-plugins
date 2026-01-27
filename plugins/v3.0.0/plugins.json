@@ -352,6 +352,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/storiesecho/icon.png"
 	},
 	{
+		"id": "storiesrealm",
+		"name": "Stories Realm",
+		"site": "https://storiesrealm.com/",
+		"lang": "English",
+		"version": "1.0.8",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/StoriesRealm[madara].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/storiesrealm/icon.png"
+	},
+	{
 		"id": "transcendentaltls",
 		"name": "Transcendental",
 		"site": "https://transcendentaltls.com/api/general/",
