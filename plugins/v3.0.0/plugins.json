@@ -225,6 +225,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/foxaholic18/icon.png"
 	},
 	{
+		"id": "katreadingcafe",
+		"name": "Kat Reading Cafe - ( ˘▽˘)っ☕️",
+		"site": "https://katreadingcafe.com/",
+		"lang": "English",
+		"version": "1.1.9",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/KatReadingCafe(˘▽˘)っ☕️[lightnovelwp].js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/lightnovelwp/katreadingcafe/icon.png"
+	},
+	{
 		"id": "litcity",
 		"name": "Literature City",
 		"site": "https://literaturecity.com/",

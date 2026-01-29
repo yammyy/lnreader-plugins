@@ -210,8 +210,7 @@ var MadaraPlugin = /** @class */ (function () {
                 .find('.post-title')
                 .text()
                 .trim();
-            var novelUrl = loadedCheerio(element).find('.post-title').find('a').attr('href') ||
-                '';
+            var novelUrl = loadedCheerio(element).find('.post-title').find('a').attr('href') || '';
             if (!novelName || !novelUrl)
                 return;
             var image = loadedCheerio(element).find('img');
