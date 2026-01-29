@@ -9,27 +9,80 @@ class akkNovelPlugin implements Plugin.PluginBase {
   name = 'AKK Novel';
   icon = 'src/en/akknovel/favicon.png'; // change path if needed
   site = 'https://www.akknovel.com/';
-  version = '1.0.0';
+  version = '2.0.0';
 
   // Optional: if you later want to add filters (genre, status, etc.)
   // filters = { ... }
-
   private normalizeChapterName(raw: string): string {
-    // "Ch.1" → "Chapter 00001"
-    // "Ch. 45: Title" → "Chapter 00045. Title"
-    // "Chapter Twenty" → leave as is or improve later
-
     raw = raw.trim();
 
-    const chMatch = raw.match(/^Ch\.?\s*(\d+)([:.].*)?$/i);
-    if (chMatch) {
-      const num = parseInt(chMatch[1], 10);
-      const rest = (chMatch[2] || '').trim();
-      const numPadded = String(num).padStart(5, '0');
-      return rest ? `Chapter ${numPadded}${rest}` : `Chapter ${numPadded}`;
+    // ───────────────────────────────────────────────────────────────
+    //  Helper to pad only the integer part (supports decimals like 9.5)
+    // ───────────────────────────────────────────────────────────────
+    const padNumber = (numStr: string): string => {
+      const [int, dec = ''] = numStr.split('.');
+      const paddedInt = int.padStart(5, '0');
+      return dec ? `${paddedInt}.${dec}` : paddedInt;
+    };
+
+    // ───────────────────────────────────────────────────────────────
+    //  Pattern 1: Ch.123Title, Ch. 45: Title, Ch45 - Extra, ch.9.5
+    // ───────────────────────────────────────────────────────────────
+    const match1 = raw.match(/^Ch\.?\s*(\d+(?:\.\d+)?)(.*)$/i);
+    if (match1) {
+      const numStr = match1[1];
+      let rest = match1[2].trim();
+
+      // Clean up common separators at start of rest
+      rest = rest.replace(/^[:.\-\s]+/, '').trim();
+
+      const padded = padNumber(numStr);
+      return rest ? `Chapter ${padded} ${rest}` : `Chapter ${padded}`;
     }
 
-    // fallback — keep original
+    // ───────────────────────────────────────────────────────────────
+    //  Pattern 2: Chapter 123, Chapter 45 Title, Chapter 9.5 - Extra
+    // ───────────────────────────────────────────────────────────────
+    const match2 = raw.match(/^Chapter\s+(\d+(?:\.\d+)?)(.*)$/i);
+    if (match2) {
+      const numStr = match2[1];
+      let rest = match2[2].trim();
+
+      rest = rest.replace(/^[:.\-\s]+/, '').trim();
+
+      const padded = padNumber(numStr);
+      return rest ? `Chapter ${padded} ${rest}` : `Chapter ${padded}`;
+    }
+
+    // ───────────────────────────────────────────────────────────────
+    //  Pattern 3: Ep.12, Episode 8 Title (optional fallback)
+    // ───────────────────────────────────────────────────────────────
+    const match3 = raw.match(/^(?:Ep(?:isode)?\.?)\s*(\d+(?:\.\d+)?)(.*)$/i);
+    if (match3) {
+      const numStr = match3[1];
+      let rest = match3[2].trim();
+
+      rest = rest.replace(/^[:.\-\s]+/, '').trim();
+
+      const padded = padNumber(numStr);
+      return rest ? `Chapter ${padded} ${rest}` : `Chapter ${padded}`;
+    }
+
+    // ───────────────────────────────────────────────────────────────
+    //  Fallback: try to fix obvious "Ch 123" or "ch.123" → "Chapter 00123"
+    // ───────────────────────────────────────────────────────────────
+    const fallbackMatch = raw.match(/^ch\.?\s*(\d+(?:\.\d+)?)(.*)$/i);
+    if (fallbackMatch) {
+      const numStr = fallbackMatch[1];
+      let rest = fallbackMatch[2].trim();
+
+      rest = rest.replace(/^[:.\-\s]+/, '').trim();
+
+      const padded = padNumber(numStr);
+      return rest ? `Chapter ${padded} ${rest}` : `Chapter ${padded}`;
+    }
+
+    // Ultimate fallback — just return original (or you can add more logic)
     return raw;
   }
 
