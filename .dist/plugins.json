@@ -288,6 +288,15 @@
 		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/multisrc/madara/novelbike/icon.png"
 	},
 	{
+		"id": "novelbun",
+		"name": "Novel Bun",
+		"site": "https://novelbun.com/",
+		"lang": "English",
+		"version": "0.1.0",
+		"url": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/.js/src/plugins/english/novelbun.js",
+		"iconUrl": "https://raw.githubusercontent.com/yammyy/lnreader-plugins/dist/public/static/src/en/novelbun/favicon.png"
+	},
+	{
 		"id": "novelib",
 		"name": "NovelLib",
 		"site": "https://novelib.com",
