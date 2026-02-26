@@ -157,6 +157,9 @@ class NovelUpdates implements Plugin.PluginBase {
         .replace('c', ' chapter ')
         .replace('part', 'part ')
         .replace('ss', 'SS')
+        // Находим все числа и дополняем их до 5 знаков
+        .replace(/\d+/g, match => match.padStart(5, '0'))
+        // Делаем первые буквы заглавными
         .replace(/\b\w/g, l => l.toUpperCase())
         .trim();
 
